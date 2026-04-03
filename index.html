@@ -22,7 +22,6 @@
       --accent-blue: #5876a8;
       --accent-gold: #c69a2c;
       --accent-plum: #8c5a79;
-      --accent-sage: #7f9179;
 
       --radius-xl: 30px;
       --radius-lg: 22px;
@@ -142,26 +141,26 @@
 
     /* Hero */
     .hero {
-      padding: 58px 0 38px;
+      padding: 54px 0 22px;
     }
 
     .hero-inner {
       display: grid;
-      grid-template-columns: 0.8fr 1.2fr;
-      gap: 36px;
+      grid-template-columns: 0.78fr 1.22fr;
+      gap: 34px;
       align-items: center;
     }
 
     .hero-copy {
-      padding: 10px 0;
+      padding: 8px 0;
     }
 
     .hero h1 {
-      font-size: clamp(42px, 6vw, 78px);
+      font-size: clamp(42px, 6vw, 76px);
       line-height: 0.95;
       color: var(--ink);
-      margin-bottom: 20px;
-      max-width: 8.5ch;
+      margin-bottom: 18px;
+      max-width: 8.2ch;
     }
 
     .hero h1 em {
@@ -172,7 +171,7 @@
     .hero p {
       font-size: 17px;
       color: var(--ink-soft);
-      max-width: 44ch;
+      max-width: 43ch;
     }
 
     .hero-visual {
@@ -183,7 +182,7 @@
 
     .pentagon-stage {
       position: relative;
-      width: min(100%, 720px);
+      width: min(100%, 700px);
       aspect-ratio: 1 / 1;
       display: flex;
       align-items: center;
@@ -295,9 +294,49 @@
       border-radius: 24px;
     }
 
+    /* Quick jump */
+    .quick-jump-wrap {
+      padding: 10px 0 12px;
+    }
+
+    .quick-jump {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .quick-jump-label {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-right: 2px;
+    }
+
+    .quick-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid var(--line);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      transition: .2s ease;
+    }
+
+    .quick-link:hover {
+      background: white;
+      color: var(--ink);
+      border-color: var(--line-strong);
+    }
+
     /* Sections */
     .section {
-      padding: 42px 0 0;
+      padding: 24px 0 0;
     }
 
     .section-card {
@@ -316,7 +355,7 @@
     }
 
     .section-panel {
-      padding: 38px;
+      padding: 34px;
     }
 
     .section-panel.visual {
@@ -329,10 +368,10 @@
     }
 
     .section h2 {
-      font-size: clamp(30px, 4vw, 50px);
+      font-size: clamp(30px, 4vw, 48px);
       line-height: 1;
       color: var(--ink);
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       max-width: 12ch;
     }
 
@@ -340,22 +379,22 @@
       font-size: 16px;
       color: var(--ink-soft);
       max-width: 60ch;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     /* Challenge framework */
     .challenge-framework {
       display: grid;
-      gap: 16px;
+      gap: 14px;
       margin-bottom: 0;
     }
 
     .challenge-point {
       display: grid;
-      grid-template-columns: 56px 1fr;
+      grid-template-columns: 52px 1fr;
       gap: 16px;
       align-items: start;
-      padding: 18px 0;
+      padding: 16px 0;
       border-top: 1px solid var(--line);
     }
 
@@ -365,9 +404,9 @@
     }
 
     .challenge-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 18px;
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
       background: var(--surface-soft);
       border: 1px solid var(--line);
       display: grid;
@@ -377,8 +416,8 @@
     }
 
     .challenge-icon svg {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       stroke: currentColor;
     }
 
@@ -400,7 +439,7 @@
       background: #fbfaf7;
       border: 1px solid var(--line);
       border-radius: var(--radius-lg);
-      padding: 24px;
+      padding: 22px;
     }
 
     .starting-points h3 {
@@ -426,7 +465,7 @@
       background: var(--surface);
       border: 1px solid var(--line);
       border-radius: 16px;
-      padding: 16px 17px;
+      padding: 15px 16px;
     }
 
     .starting-point strong {
@@ -454,7 +493,7 @@
       background: rgba(255,255,255,.94);
       border: 1px solid var(--line);
       border-radius: var(--radius-lg);
-      padding: 22px;
+      padding: 20px;
     }
 
     .partner-card .tag {
@@ -468,10 +507,10 @@
     }
 
     .partner-card h3 {
-      font-size: 24px;
+      font-size: 23px;
       line-height: 1.02;
       color: var(--ink);
-      margin-bottom: 9px;
+      margin-bottom: 8px;
     }
 
     .partner-card p {
@@ -487,7 +526,7 @@
       font-family: 'DM Serif Display', serif;
       font-style: italic;
       color: var(--accent-plum);
-      font-size: 19px;
+      font-size: 18px;
       line-height: 1.35;
     }
 
@@ -495,7 +534,7 @@
       background: #fbfaf7;
       border: 1px solid var(--line);
       border-radius: 16px;
-      padding: 15px 16px;
+      padding: 14px 16px;
       margin-bottom: 18px;
       font-size: 14px;
       color: var(--ink-soft);
@@ -517,7 +556,7 @@
     }
 
     .challenge-question-left {
-      padding: 38px;
+      padding: 34px;
       background:
         radial-gradient(circle at 18% 18%, rgba(88, 118, 168, 0.08), transparent 28%),
         linear-gradient(180deg, #fbfaf7 0%, #f7f4ef 100%);
@@ -552,7 +591,7 @@
 
     .challenge-question-right {
       background: rgba(255,255,255,.98);
-      padding: 38px;
+      padding: 34px;
     }
 
     .formula-label {
@@ -566,7 +605,7 @@
 
     .formula-text {
       font-family: 'DM Serif Display', serif;
-      font-size: clamp(28px, 3.4vw, 42px);
+      font-size: clamp(28px, 3.4vw, 40px);
       line-height: 1.1;
       color: var(--ink);
       margin-bottom: 16px;
@@ -593,7 +632,7 @@
       background: var(--surface-soft);
       border: 1px solid var(--line);
       border-radius: 16px;
-      padding: 15px 16px;
+      padding: 14px 16px;
     }
 
     .principles-mini .mini strong {
@@ -611,9 +650,9 @@
 
     /* Footer */
     .footer {
-      margin-top: 58px;
+      margin-top: 44px;
       border-top: 1px solid rgba(31, 41, 55, 0.08);
-      padding: 24px 0 34px;
+      padding: 22px 0 30px;
     }
 
     .footer-inner {
@@ -646,7 +685,6 @@
       color: var(--ink);
     }
 
-    /* Responsive */
     @media (max-width: 1040px) {
       .hero-inner,
       .section-grid,
@@ -742,30 +780,26 @@
         <div class="eyebrow">DEEDS Framework</div>
         <h1>Rigorous learning <em>through real-world impact</em></h1>
         <p>
-          DEEDS organizes learning around real community challenges, standards-aligned learning, and authentic partners. Explore the interactive graphic to learn more about each phase in the learning cycle.
+          DEEDS organizes learning around real community challenges, standards-aligned learning, and authentic partners. Choose a DEEDS phase using the navigation above or the interactive DEEDS graphic.
         </p>
       </div>
 
       <div class="hero-visual">
         <div class="pentagon-stage">
-          <img src="Full Pentagon.png" alt="DEEDS pentagon logo" class="pentagon-image">
+          <img src="/full-pentagon.png" alt="Interactive DEEDS phase graphic" class="pentagon-image">
 
           <a href="discover.html" class="phase-hotspot hotspot-discover" aria-label="Go to Discover">
             <span>Discover</span>
           </a>
-
           <a href="examine.html" class="phase-hotspot hotspot-examine" aria-label="Go to Examine">
             <span>Examine</span>
           </a>
-
           <a href="engineer.html" class="phase-hotspot hotspot-engineer" aria-label="Go to Engineer">
             <span>Engineer</span>
           </a>
-
           <a href="do.html" class="phase-hotspot hotspot-do" aria-label="Go to Do">
             <span>Do</span>
           </a>
-
           <a href="share.html" class="phase-hotspot hotspot-share" aria-label="Go to Share">
             <span>Share</span>
           </a>
@@ -774,7 +808,18 @@
     </div>
   </section>
 
-  <section class="section">
+  <div class="quick-jump-wrap">
+    <div class="container">
+      <div class="quick-jump" aria-label="Homepage section links">
+        <span class="quick-jump-label">Jump to</span>
+        <a class="quick-link" href="#relevant-challenge">Relevant Challenge</a>
+        <a class="quick-link" href="#partners">Partners</a>
+        <a class="quick-link" href="#challenge-question">Challenge Question</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" id="relevant-challenge">
     <div class="container">
       <div class="section-card">
         <div class="section-grid">
@@ -872,7 +917,7 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" id="partners">
     <div class="container">
       <div class="section-card">
         <div class="section-grid">
@@ -929,7 +974,7 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" id="challenge-question">
     <div class="container">
       <div class="challenge-question-shell">
         <div class="challenge-question-grid">
