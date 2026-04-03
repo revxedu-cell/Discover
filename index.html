@@ -194,7 +194,45 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);lin
 
 
 /* ── Phase Pentagon ── */
-#pentagon{}
+#pentagon{
+  padding:72px 24px 80px;
+  text-align:center;
+}
+.pent-kicker{
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:10px;
+}
+#pentagon h2{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(26px,3.5vw,38px);
+  color:var(--text);margin-bottom:8px;
+}
+#pentagon .pent-sub{
+  font-size:15px;color:var(--text-muted);margin-bottom:48px;
+}
+.pent-wrap{
+  display:inline-block;position:relative;
+}
+.pent-svg .wedge{
+  cursor:pointer;
+  transition:opacity .18s,filter .18s;
+}
+.pent-svg .wedge:hover{
+  opacity:.85;filter:brightness(1.08);
+}
+.pent-svg .wedge.disabled{cursor:default;}
+.pent-svg .wedge-label{
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:700;
+  fill:#fff;pointer-events:none;
+}
+.pent-svg .center-label{
+  font-family:'DM Sans',sans-serif;
+  font-size:10.5px;font-weight:600;
+  fill:var(--accent-navy);
+  text-anchor:middle;
+  pointer-events:none;
+}
 
 
 /* ── Community Challenge ── */
@@ -301,7 +339,71 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);lin
 </section>
 
 <!-- Phase Pentagon -->
-<section id="pentagon"></section>
+<section id="pentagon">
+  <p class="pent-kicker">The Framework</p>
+  <h2>Five Phases. One Community Challenge.</h2>
+  <p class="pent-sub">Each phase builds on the last — from investigation to action.</p>
+
+  <div class="pent-wrap">
+    <!--
+      Regular pentagon, cx=250 cy=248 R=168
+      Vertices (angle starts at -90°, clockwise every 72°):
+        V0 top:         (250, 80)
+        V1 upper-right: (409.8, 190.1)
+        V2 lower-right: (350.4, 379.9)
+        V3 lower-left:  (149.6, 379.9)
+        V4 upper-left:  (90.2, 190.1)
+    -->
+    <svg class="pent-svg" viewBox="0 0 500 500" width="400" height="400" role="img" aria-label="DEEDS five-phase pentagon">
+
+      <!-- Wedge: Discover (top → upper-right) -->
+      <g class="wedge" onclick="location.href='discover.html'" role="link" aria-label="Go to Discover phase">
+        <polygon points="250,248 250,80 409.8,190.1" fill="#e69138"/>
+        <text class="wedge-label" x="311" y="165" text-anchor="middle">Discover</text>
+      </g>
+
+      <!-- Wedge: Examine (upper-right → lower-right) -->
+      <g class="wedge disabled" onclick="alert('Examine — Coming Soon')" role="button" aria-label="Examine — Coming Soon">
+        <polygon points="250,248 409.8,190.1 350.4,379.9" fill="#0a9b19"/>
+        <text class="wedge-label" x="360" y="292" text-anchor="middle">Examine</text>
+      </g>
+
+      <!-- Wedge: Engineer (lower-right → lower-left) -->
+      <g class="wedge disabled" onclick="alert('Engineer — Coming Soon')" role="button" aria-label="Engineer — Coming Soon">
+        <polygon points="250,248 350.4,379.9 149.6,379.9" fill="#003da6"/>
+        <text class="wedge-label" x="250" y="368" text-anchor="middle">Engineer</text>
+      </g>
+
+      <!-- Wedge: Do (lower-left → upper-left) -->
+      <g class="wedge disabled" onclick="alert('Do — Coming Soon')" role="button" aria-label="Do — Coming Soon">
+        <polygon points="250,248 149.6,379.9 90.2,190.1" fill="#ffb600"/>
+        <text class="wedge-label" x="140" y="292" text-anchor="middle" fill="#5a3d00">Do</text>
+      </g>
+
+      <!-- Wedge: Share (upper-left → top) -->
+      <g class="wedge disabled" onclick="alert('Share — Coming Soon')" role="button" aria-label="Share — Coming Soon">
+        <polygon points="250,248 90.2,190.1 250,80" fill="#ab0a3d"/>
+        <text class="wedge-label" x="189" y="165" text-anchor="middle">Share</text>
+      </g>
+
+      <!-- White gaps between wedges -->
+      <polygon points="250,248 250,80 409.8,190.1 350.4,379.9 149.6,379.9 90.2,190.1"
+               fill="none" stroke="#fff" stroke-width="3"/>
+      <line x1="250" y1="248" x2="250" y2="80"       stroke="#fff" stroke-width="3"/>
+      <line x1="250" y1="248" x2="409.8" y2="190.1"  stroke="#fff" stroke-width="3"/>
+      <line x1="250" y1="248" x2="350.4" y2="379.9"  stroke="#fff" stroke-width="3"/>
+      <line x1="250" y1="248" x2="149.6" y2="379.9"  stroke="#fff" stroke-width="3"/>
+      <line x1="250" y1="248" x2="90.2" y2="190.1"   stroke="#fff" stroke-width="3"/>
+
+      <!-- Center circle -->
+      <circle cx="250" cy="248" r="62" fill="#fff" stroke="rgba(0,31,97,.1)" stroke-width="1"/>
+      <text class="center-label" x="250" y="236">A Relevant</text>
+      <text class="center-label" x="250" y="251">Community</text>
+      <text class="center-label" x="250" y="266">Challenge</text>
+
+    </svg>
+  </div>
+</section>
 
 <!-- Finding Your Community Challenge -->
 <section id="community-challenge"></section>
