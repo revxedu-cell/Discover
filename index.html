@@ -87,7 +87,110 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);lin
 
 
 /* ── Hero ── */
-#hero{}
+#hero{
+  background:linear-gradient(160deg,var(--accent-navy) 0%,#0a2a6e 60%,#163580 100%);
+  color:#fff;
+  padding:80px 24px 88px;
+  position:relative;
+  overflow:hidden;
+}
+#hero::before{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 60% at 80% 20%,rgba(230,145,56,.18),transparent),
+    radial-gradient(ellipse 40% 50% at 10% 80%,rgba(0,170,200,.12),transparent);
+  pointer-events:none;
+}
+.hero-in{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 420px;gap:64px;align-items:center;
+  position:relative;z-index:1;
+}
+.hero-kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--discover);
+  margin-bottom:22px;
+}
+.hero-kicker-bar{
+  display:flex;gap:4px;
+}
+.hero-kicker-bar span{
+  width:18px;height:4px;border-radius:2px;
+}
+#hero h1{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(38px,5.5vw,62px);
+  line-height:1.06;
+  margin-bottom:24px;
+  letter-spacing:-.5px;
+}
+#hero h1 em{
+  font-style:italic;
+  color:var(--discover);
+}
+#hero .hero-body{
+  font-size:17px;line-height:1.75;
+  color:rgba(255,255,255,.78);
+  max-width:520px;
+}
+#hero .hero-body strong{
+  color:#fff;font-weight:600;
+}
+.hero-cta{
+  display:flex;gap:12px;flex-wrap:wrap;
+  margin-top:36px;
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--discover);color:#fff;
+  font-family:inherit;font-size:14px;font-weight:700;
+  padding:13px 26px;border-radius:10px;border:none;
+  cursor:pointer;text-decoration:none;
+  transition:opacity .2s,transform .15s;
+}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px)}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.1);color:#fff;
+  font-family:inherit;font-size:14px;font-weight:600;
+  padding:13px 26px;border-radius:10px;
+  border:1.5px solid rgba(255,255,255,.2);
+  cursor:pointer;text-decoration:none;
+  transition:background .2s;
+}
+.btn-ghost:hover{background:rgba(255,255,255,.18)}
+.hero-visual{
+  display:flex;flex-direction:column;gap:12px;
+  position:relative;
+}
+.hero-phase-strip{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  padding:16px 20px;
+  display:flex;align-items:center;gap:14px;
+}
+.hero-phase-strip:first-child{border-left:4px solid var(--discover)}
+.hero-phase-strip:nth-child(2){border-left:4px solid var(--examine)}
+.hero-phase-strip:nth-child(3){border-left:4px solid var(--engineer)}
+.hero-phase-strip:nth-child(4){border-left:4px solid var(--do)}
+.hero-phase-strip:nth-child(5){border-left:4px solid var(--share)}
+.hps-num{
+  font-size:11px;font-weight:700;letter-spacing:1px;
+  color:rgba(255,255,255,.4);flex-shrink:0;width:18px;
+}
+.hps-name{
+  font-size:14px;font-weight:700;color:#fff;flex:1;
+}
+.hps-desc{
+  font-size:12px;color:rgba(255,255,255,.5);
+}
+@media(max-width:860px){
+  .hero-in{grid-template-columns:1fr}
+  .hero-visual{display:none}
+}
 
 
 /* ── Phase Pentagon ── */
@@ -137,7 +240,65 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);lin
 </nav>
 
 <!-- Hero -->
-<section id="hero"></section>
+<section id="hero">
+  <div class="hero-in">
+
+    <div class="hero-text">
+      <div class="hero-kicker">
+        <div class="hero-kicker-bar">
+          <span style="background:var(--discover)"></span>
+          <span style="background:var(--examine)"></span>
+          <span style="background:var(--engineer)"></span>
+          <span style="background:var(--do)"></span>
+          <span style="background:var(--share)"></span>
+        </div>
+        A Project-Based Learning Framework
+      </div>
+
+      <h1>DEEDS: A Framework for Learning<br><em>That Matters</em></h1>
+
+      <p class="hero-body">
+        What if your students spent the school year solving <strong>real, critical problems</strong> in their community — and mastered core content in the process?
+        <br><br>
+        DEEDS is a project-based learning framework that guides students through repeated cycles of investigation, design, and action, each anchored in a genuine community challenge.
+      </p>
+
+      <div class="hero-cta">
+        <a href="plan.html" class="btn-primary">Plan Your Unit →</a>
+        <a href="discover.html" class="btn-ghost">Explore Discover</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-phase-strip">
+        <span class="hps-num">01</span>
+        <span class="hps-name">Discover</span>
+        <span class="hps-desc">Investigate the challenge</span>
+      </div>
+      <div class="hero-phase-strip">
+        <span class="hps-num">02</span>
+        <span class="hps-name">Examine</span>
+        <span class="hps-desc">Analyze root causes</span>
+      </div>
+      <div class="hero-phase-strip">
+        <span class="hps-num">03</span>
+        <span class="hps-name">Engineer</span>
+        <span class="hps-desc">Design solutions</span>
+      </div>
+      <div class="hero-phase-strip">
+        <span class="hps-num">04</span>
+        <span class="hps-name">Do</span>
+        <span class="hps-desc">Take action</span>
+      </div>
+      <div class="hero-phase-strip">
+        <span class="hps-num">05</span>
+        <span class="hps-name">Share</span>
+        <span class="hps-desc">Reflect &amp; present</span>
+      </div>
+    </div>
+
+  </div>
+</section>
 
 <!-- Phase Pentagon -->
 <section id="pentagon"></section>
