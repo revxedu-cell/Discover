@@ -368,26 +368,23 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);lin
 <nav class="nav">
   <div class="nav-in">
     <a href="index.html" class="nb active">Home</a>
-    <a href="plan.html" class="nb">Plan Your Unit</a>
+    <a href="plan.html" class="nb">Plan Your Project</a>
+
     <a href="discover.html" class="nb nb-phase">
       <span class="nb-dot" style="background:var(--discover)"></span>Discover
     </a>
-    <span class="nb nb-phase disabled">
+    <a href="examine.html" class="nb nb-phase">
       <span class="nb-dot" style="background:var(--examine)"></span>Examine
-      <span class="nb-soon">Soon</span>
-    </span>
-    <span class="nb nb-phase disabled">
+    </a>
+    <a href="engineer.html" class="nb nb-phase">
       <span class="nb-dot" style="background:var(--engineer)"></span>Engineer
-      <span class="nb-soon">Soon</span>
-    </span>
-    <span class="nb nb-phase disabled">
+    </a>
+    <a href="do.html" class="nb nb-phase">
       <span class="nb-dot" style="background:var(--do)"></span>Do
-      <span class="nb-soon">Soon</span>
-    </span>
-    <span class="nb nb-phase disabled">
+    </a>
+    <a href="share.html" class="nb nb-phase">
       <span class="nb-dot" style="background:var(--share)"></span>Share
-      <span class="nb-soon">Soon</span>
-    </span>
+    </a>
   </div>
 </nav>
 
@@ -395,29 +392,19 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);lin
 <section id="hero">
   <div class="hero-in">
 
-    <div class="hero-text">
+    <div>
       <div class="hero-kicker">
-        <div class="hero-kicker-bar">
-          <span style="background:var(--discover)"></span>
-          <span style="background:var(--examine)"></span>
-          <span style="background:var(--engineer)"></span>
-          <span style="background:var(--do)"></span>
-          <span style="background:var(--share)"></span>
-        </div>
-        A Project-Based Learning Framework
+        DEEDS Framework
       </div>
 
-      <h1>DEEDS: A Framework for Learning<br><em>That Matters</em></h1>
+      <h1>Rigorous learning<br><em>through real-world impact</em></h1>
 
       <p class="hero-body">
-        What if your students spent the school year solving <strong>real, critical problems</strong> in their community — and mastered core content in the process?
-        <br><br>
-        DEEDS is a project-based learning framework that guides students through repeated cycles of investigation, design, and action, each anchored in a genuine community challenge.
+        DEEDS organizes learning around real community challenges. Students build deep academic knowledge, work with real partners, and create solutions that are tested, implemented, and shared beyond the classroom.
       </p>
 
       <div class="hero-cta">
-        <a href="plan.html" class="btn-primary">Plan Your Unit →</a>
-        <a href="discover.html" class="btn-ghost">Explore Discover</a>
+        <a href="plan.html" class="btn-primary">Plan a Project →</a>
       </div>
     </div>
 
@@ -425,174 +412,166 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);lin
       <div class="hero-phase-strip">
         <span class="hps-num">01</span>
         <span class="hps-name">Discover</span>
-        <span class="hps-desc">Investigate the challenge</span>
+        <span class="hps-desc">Build urgency & define the problem</span>
       </div>
       <div class="hero-phase-strip">
         <span class="hps-num">02</span>
         <span class="hps-name">Examine</span>
-        <span class="hps-desc">Analyze root causes</span>
+        <span class="hps-desc">Develop deep knowledge</span>
       </div>
       <div class="hero-phase-strip">
         <span class="hps-num">03</span>
         <span class="hps-name">Engineer</span>
-        <span class="hps-desc">Design solutions</span>
+        <span class="hps-desc">Design & test solutions</span>
       </div>
       <div class="hero-phase-strip">
         <span class="hps-num">04</span>
         <span class="hps-name">Do</span>
-        <span class="hps-desc">Take action</span>
+        <span class="hps-desc">Take real action</span>
       </div>
       <div class="hero-phase-strip">
         <span class="hps-num">05</span>
         <span class="hps-name">Share</span>
-        <span class="hps-desc">Reflect &amp; present</span>
+        <span class="hps-desc">Present & reflect</span>
       </div>
     </div>
 
   </div>
 </section>
 
-<!-- Phase Pentagon -->
+<!-- Pentagon -->
 <section id="pentagon">
-  <p class="pent-kicker">The Framework</p>
-  <h2>Five Phases. One Community Challenge.</h2>
-  <p class="pent-sub">Each phase builds on the last — from investigation to action.</p>
+  <p class="pent-kicker">Framework</p>
+  <h2>One challenge. Five phases. Real outcomes.</h2>
+  <p class="pent-sub">Each phase builds toward meaningful action and public contribution.</p>
 
   <div class="pent-wrap">
-    <!--
-      Regular pentagon, cx=250 cy=248 R=168
-      Vertices (angle starts at -90°, clockwise every 72°):
-        V0 top:         (250, 80)
-        V1 upper-right: (409.8, 190.1)
-        V2 lower-right: (350.4, 379.9)
-        V3 lower-left:  (149.6, 379.9)
-        V4 upper-left:  (90.2, 190.1)
-    -->
-    <svg class="pent-svg" viewBox="0 0 500 500" width="400" height="400" role="img" aria-label="DEEDS five-phase pentagon">
 
-      <!-- Wedge: Discover (top → upper-right) -->
-      <g class="wedge" onclick="location.href='discover.html'" role="link" aria-label="Go to Discover phase">
+    <svg class="pent-svg" viewBox="0 0 500 500" width="420" height="420">
+
+      <a href="discover.html">
         <polygon points="250,248 250,80 409.8,190.1" fill="#e69138"/>
-        <text class="wedge-label" x="311" y="165" text-anchor="middle">Discover</text>
-      </g>
+        <text class="wedge-label" x="308" y="170" text-anchor="middle">Discover</text>
+      </a>
 
-      <!-- Wedge: Examine (upper-right → lower-right) -->
-      <g class="wedge disabled" onclick="alert('Examine — Coming Soon')" role="button" aria-label="Examine — Coming Soon">
+      <a href="examine.html">
         <polygon points="250,248 409.8,190.1 350.4,379.9" fill="#0a9b19"/>
-        <text class="wedge-label" x="360" y="292" text-anchor="middle">Examine</text>
-      </g>
+        <text class="wedge-label" x="348" y="296" text-anchor="middle">Examine</text>
+      </a>
 
-      <!-- Wedge: Engineer (lower-right → lower-left) -->
-      <g class="wedge disabled" onclick="alert('Engineer — Coming Soon')" role="button" aria-label="Engineer — Coming Soon">
+      <a href="engineer.html">
         <polygon points="250,248 350.4,379.9 149.6,379.9" fill="#003da6"/>
-        <text class="wedge-label" x="250" y="368" text-anchor="middle">Engineer</text>
-      </g>
+        <text class="wedge-label" x="250" y="374" text-anchor="middle">Engineer</text>
+      </a>
 
-      <!-- Wedge: Do (lower-left → upper-left) -->
-      <g class="wedge disabled" onclick="alert('Do — Coming Soon')" role="button" aria-label="Do — Coming Soon">
+      <a href="do.html">
         <polygon points="250,248 149.6,379.9 90.2,190.1" fill="#ffb600"/>
-        <text class="wedge-label" x="140" y="292" text-anchor="middle" fill="#5a3d00">Do</text>
-      </g>
+        <text class="wedge-label" x="152" y="296" text-anchor="middle">Do</text>
+      </a>
 
-      <!-- Wedge: Share (upper-left → top) -->
-      <g class="wedge disabled" onclick="alert('Share — Coming Soon')" role="button" aria-label="Share — Coming Soon">
+      <a href="share.html">
         <polygon points="250,248 90.2,190.1 250,80" fill="#ab0a3d"/>
-        <text class="wedge-label" x="189" y="165" text-anchor="middle">Share</text>
-      </g>
+        <text class="wedge-label" x="190" y="168" text-anchor="middle">Share</text>
+      </a>
 
-      <!-- White gaps between wedges -->
-      <polygon points="250,248 250,80 409.8,190.1 350.4,379.9 149.6,379.9 90.2,190.1"
-               fill="none" stroke="#fff" stroke-width="3"/>
-      <line x1="250" y1="248" x2="250" y2="80"       stroke="#fff" stroke-width="3"/>
-      <line x1="250" y1="248" x2="409.8" y2="190.1"  stroke="#fff" stroke-width="3"/>
-      <line x1="250" y1="248" x2="350.4" y2="379.9"  stroke="#fff" stroke-width="3"/>
-      <line x1="250" y1="248" x2="149.6" y2="379.9"  stroke="#fff" stroke-width="3"/>
-      <line x1="250" y1="248" x2="90.2" y2="190.1"   stroke="#fff" stroke-width="3"/>
-
-      <!-- Center circle -->
-      <circle cx="250" cy="248" r="62" fill="#fff" stroke="rgba(0,31,97,.1)" stroke-width="1"/>
-      <text class="center-label" x="250" y="236">A Relevant</text>
-      <text class="center-label" x="250" y="251">Community</text>
-      <text class="center-label" x="250" y="266">Challenge</text>
+      <circle cx="250" cy="248" r="62" fill="#fff"/>
+      <text class="center-label" x="250" y="240">A Real</text>
+      <text class="center-label" x="250" y="255">Community</text>
+      <text class="center-label" x="250" y="270">Challenge</text>
 
     </svg>
+
   </div>
 </section>
 
-<!-- Finding Your Community Challenge -->
+<!-- What Makes DEEDS Different -->
 <section id="community-challenge">
   <div class="cc-in">
-    <p class="cc-kicker">Getting Started</p>
-    <h2>Finding Your Community Challenge</h2>
-    <p class="cc-intro">A strong community challenge is <strong>real, close, and worth solving.</strong></p>
+    <p class="cc-kicker">What Makes This Different</p>
+    <h2>Not a project. A structure for learning.</h2>
 
     <div class="cc-grid">
 
       <div class="cc-strategies">
-        <h3>Strategies for Identifying Challenges</h3>
 
         <div class="cc-strategy">
-          <div class="cc-icon">👂</div>
+          <div class="cc-icon">1</div>
           <div class="cc-strategy-text">
-            <strong>Listen to students</strong>
-            <span>Students often name the problems closest to them — let their voices lead.</span>
+            <strong>Real challenge</strong>
+            <span>Learning is anchored in an actual problem that matters beyond school.</span>
           </div>
         </div>
 
         <div class="cc-strategy">
-          <div class="cc-icon">🤝</div>
+          <div class="cc-icon">2</div>
           <div class="cc-strategy-text">
-            <strong>Partner with community organizations</strong>
-            <span>Local nonprofits, city agencies, and advocacy groups carry real, unsolved problems.</span>
+            <strong>Academic rigor</strong>
+            <span>Students build deep knowledge and use disciplinary thinking to understand the challenge.</span>
           </div>
         </div>
 
         <div class="cc-strategy">
-          <div class="cc-icon">📍</div>
+          <div class="cc-icon">3</div>
           <div class="cc-strategy-text">
-            <strong>Look for the proximal</strong>
-            <span>The best challenges are nearby — visible, tangible, and actionable within a school year.</span>
+            <strong>Real action</strong>
+            <span>Students design and implement solutions that create visible impact.</span>
           </div>
         </div>
+
       </div>
 
       <div class="cc-examples">
-        <h3>Examples</h3>
-        <div class="cc-example-card">Improve air quality in our neighborhood</div>
-        <div class="cc-example-card">Support foster youth transitions</div>
-        <div class="cc-example-card">Redesign schoolyard for safe play</div>
+        <div class="cc-example-card">Improve air quality for families with asthma</div>
+        <div class="cc-example-card">Redesign public spaces for safety and use</div>
+        <div class="cc-example-card">Reduce food waste in the community</div>
       </div>
 
     </div>
   </div>
 </section>
 
-<!-- Crafting Your Challenge Question -->
-<section id="challenge-question"></section>
+<!-- Challenge Question -->
+<section id="challenge-question">
+  <div class="cq-in">
+    <p class="cq-kicker">Design the Work</p>
+    <h2>Frame a question that leads to action</h2>
 
-<!-- Get Started -->
-<section id="get-started">
-  <div class="gs-in">
-    <p class="gs-kicker">Ready?</p>
-    <h2>Start Your DEEDS Journey</h2>
-    <p class="gs-sub">Choose where to begin.</p>
+    <div class="cq-formula">
+      <p class="cq-formula-text">
+        How might we address <em>[a real challenge]</em> so that <em>[a specific community]</em> can <em>[experience improvement]</em>?
+      </p>
+    </div>
 
-    <div class="gs-cards">
-      <a href="plan.html" class="gs-card primary">
-        <span class="gs-card-eyebrow">Step 1</span>
-        <h3>Plan Your Unit →</h3>
-        <p>Design your challenge and learning journey</p>
-        <span class="gs-card-arrow">→</span>
-      </a>
-      <a href="discover.html" class="gs-card">
-        <span class="gs-card-eyebrow">Explore the Phases</span>
-        <h3>Start with Discover →</h3>
-        <p>Dive into Phase 1 and begin investigating your community challenge</p>
-        <span class="gs-card-arrow">→</span>
-      </a>
+    <div class="cq-tips">
+      <div class="cq-tip">
+        <strong>Make it real</strong>
+        <span>Ground it in a real place, partner, or need.</span>
+      </div>
+      <div class="cq-tip">
+        <strong>Keep it open</strong>
+        <span>Students should need to investigate before responding.</span>
+      </div>
+      <div class="cq-tip">
+        <strong>Point to action</strong>
+        <span>The question should lead to building, testing, or improving something.</span>
+      </div>
+      <div class="cq-tip">
+        <strong>Name who it serves</strong>
+        <span>Keep the people affected visible throughout the work.</span>
+      </div>
     </div>
   </div>
 </section>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-in">
+    <div class="footer-brand">
+      <p class="footer-wordmark">DEEDS</p>
+      <p>A framework for rigorous, real-world learning grounded in community challenges.</p>
+    </div>
+  </div>
+</footer>
 
 </body>
 </html>
