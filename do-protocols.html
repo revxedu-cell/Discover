@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Do — Key Routines | DEEDS</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ph:#E65100;--phl:#F57F17;--phd:#BF360C;
+  --acc:#FFB300;--acc2:#FFF8E1;
+  --ink:#1A0A00;--muted:#6D4C41;--pale:#FFFBF4;
+  --white:#fff;--border:#FFCC80;
+  --card-r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Barlow',sans-serif;background:#1A0E00;color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+
+nav{background:var(--phd);display:flex;align-items:center;gap:0;padding:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+.nav-phase{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:2px;color:#fff;background:var(--ph);padding:14px 22px;text-transform:uppercase;white-space:nowrap}
+.nav-protocols{display:flex;gap:0;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-protocols::-webkit-scrollbar{display:none}
+.np{padding:14px 20px;font-size:13px;font-weight:600;color:rgba(255,255,255,.65);text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;cursor:pointer;background:none;border-left:none;border-right:none;border-top:none}
+.np:hover{color:#fff;background:rgba(255,255,255,.08)}
+.np.active{color:#fff;border-bottom:3px solid var(--acc);background:rgba(255,179,0,.15)}
+.nav-toggle{margin-left:auto;display:flex;align-items:center;gap:10px;padding:0 20px}
+.toggle-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:1px}
+.toggle-wrap{display:flex;background:rgba(255,255,255,.1);border-radius:20px;padding:3px;gap:2px}
+.tpill{font-size:11px;font-weight:700;padding:5px 14px;border-radius:16px;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.7);border:none;background:none;letter-spacing:.5px}
+.tpill.on{background:#fff;color:var(--phd)}
+
+main{flex:1;padding:0}
+.deck{display:none}
+.deck.visible{display:block}
+
+/* TITLE */
+.title-slide{min-height:calc(100vh - 51px);background:linear-gradient(145deg,#BF360C 0%,#E65100 40%,#F57F17 70%,#FFB300 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.title-slide::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.ts-badge{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;letter-spacing:3px;background:rgba(255,255,255,.2);color:#fff;padding:6px 16px;border-radius:20px;text-transform:uppercase;margin-bottom:28px;border:1px solid rgba(255,255,255,.3)}
+.ts-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:96px;color:#fff;line-height:.9;text-align:center;letter-spacing:-2px}
+.ts-sub{font-size:22px;font-weight:600;color:rgba(255,255,255,.85);margin-top:18px;letter-spacing:.5px}
+.ts-logo{position:absolute;bottom:32px;right:36px;display:flex;align-items:center;gap:10px}
+.ts-logo-text{font-size:10px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:1.5px;text-transform:uppercase;text-align:right;line-height:1.4}
+.revx-badge{width:48px;height:48px;background:linear-gradient(135deg,#e91e63,#c21048);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:#fff}
+
+/* PROTO SLIDE */
+.proto-slide{min-height:calc(100vh - 51px);background:var(--pale);display:flex;flex-direction:column}
+.ps-header{background:linear-gradient(135deg,var(--phd),var(--ph));padding:36px 60px 28px;position:relative}
+.ps-phase-tag{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:10px;letter-spacing:3px;background:rgba(255,255,255,.2);color:rgba(255,255,255,.9);padding:4px 12px;border-radius:12px;display:inline-block;margin-bottom:10px;text-transform:uppercase}
+.ps-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:52px;color:#fff;line-height:1;letter-spacing:-1px}
+.ps-subtitle{font-size:16px;color:rgba(255,255,255,.8);margin-top:8px;font-weight:500;max-width:680px;line-height:1.5}
+.ps-meta{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+.ps-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.5px}
+.ps-timer{position:absolute;top:32px;right:48px;text-align:center}
+.ps-timer-icon{font-size:28px;line-height:1}
+.ps-timer-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;color:#fff;line-height:1}
+.ps-timer-lbl{font-size:10px;color:rgba(255,255,255,.7);letter-spacing:1px;font-weight:600}
+
+.ps-body{flex:1;padding:36px 60px 48px;display:flex;flex-direction:column;gap:28px}
+.steps-row{display:flex;align-items:stretch;gap:0}
+.step-card{flex:1;background:#fff;border:2.5px dashed var(--ph);border-radius:var(--card-r);padding:24px 22px;position:relative;display:flex;flex-direction:column;gap:12px}
+.step-timer{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.5px}
+.step-timer svg{opacity:.5}
+.step-icon{font-size:32px;line-height:1;margin:4px 0}
+.step-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--ink);line-height:1.1}
+.step-desc{font-size:14px;color:#4E342E;line-height:1.6}
+.step-starters{margin-top:4px;display:flex;flex-direction:column;gap:6px}
+.starter{font-size:13px;color:var(--ph);font-style:italic;padding-left:14px;border-left:3px solid var(--acc);line-height:1.45}
+.step-arrow{display:flex;align-items:center;padding:0 10px;color:var(--ph);font-size:26px;flex-shrink:0;align-self:center}
+
+.context-row{display:flex;gap:20px}
+.ctx-card{flex:1;background:#fff;border-radius:var(--card-r);padding:20px 22px;border:1px solid #FFE0B2}
+.ctx-card h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--acc);margin-bottom:8px}
+.ctx-card p{font-size:13px;color:#4E342E;line-height:1.6}
+
+/* TEACHER SLIDE */
+.teacher-slide{min-height:calc(100vh - 51px);background:#1A0E00;display:flex;flex-direction:column}
+.ts2-header{background:linear-gradient(135deg,#BF360C,#E65100);padding:32px 60px 24px;border-bottom:3px solid var(--acc)}
+.ts2-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--acc);text-transform:uppercase;margin-bottom:8px}
+.ts2-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:42px;color:#fff;line-height:1}
+.ts2-sub{font-size:14px;color:rgba(255,255,255,.7);margin-top:6px;font-weight:500}
+.ts2-body{flex:1;padding:36px 60px 48px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.t-panel{background:#2C1100;border-radius:var(--card-r);padding:24px 26px;border:1px solid rgba(255,179,0,.15)}
+.t-panel h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--acc);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,179,0,.2)}
+.t-panel p,.t-panel li{font-size:13.5px;color:rgba(255,255,255,.82);line-height:1.7}
+.t-panel ul{padding-left:18px;display:flex;flex-direction:column;gap:5px}
+.t-panel .std-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.std-badge{background:rgba(255,179,0,.15);border:1px solid rgba(255,179,0,.3);border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;color:var(--acc);white-space:nowrap;flex-shrink:0}
+.std-desc{font-size:12.5px;color:rgba(255,255,255,.7);line-height:1.5}
+.sold-row{display:flex;flex-direction:column;gap:10px}
+.sold-item{display:flex;gap:12px;align-items:flex-start}
+.sold-letter{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--ph),var(--acc));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:#fff;flex-shrink:0}
+.sold-text{font-size:13px;color:rgba(255,255,255,.82);line-height:1.55}
+.sold-text strong{color:#fff}
+
+footer{background:#0D0600;padding:14px 48px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06)}
+footer p{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.5px}
+
+@media(max-width:900px){
+  .ts-title{font-size:64px}
+  .ps-header,.ps-body,.ts2-header,.ts2-body{padding-left:28px;padding-right:28px}
+  .steps-row{flex-direction:column}
+  .step-arrow{transform:rotate(90deg);align-self:center;padding:6px 0}
+  .ts2-body{grid-template-columns:1fr}
+  .context-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-phase">Do</div>
+  <div class="nav-protocols">
+    <button class="np" onclick="showDeck('title')">Overview</button>
+    <button class="np" onclick="showDeck('dd')">Data Dive</button>
+    <button class="np" onclick="showDeck('es')">Evidence Snapshot</button>
+  </div>
+  <div class="nav-toggle">
+    <span class="toggle-label">View</span>
+    <div class="toggle-wrap" id="viewToggle">
+      <button class="tpill on" onclick="setView('student',event)">Scholar</button>
+      <button class="tpill" onclick="setView('teacher',event)">Teacher</button>
+    </div>
+  </div>
+</nav>
+
+<!-- TITLE -->
+<div class="deck visible" id="deck-title">
+  <div class="title-slide">
+    <div class="ts-badge">DEEDS Framework</div>
+    <div class="ts-title">DO</div>
+    <div class="ts-sub">Key Routines</div>
+    <div class="ts-logo">
+      <div class="ts-logo-text">The Next Generation of<br><strong>CHANGE MAKERS</strong></div>
+      <img src="revx-logo.png" alt="RevX" style="width:56px;height:56px;border-radius:50%;object-fit:cover">
+    </div>
+  </div>
+</div>
+
+<!-- DATA DIVE — STUDENT -->
+<div class="deck" id="deck-dd-student">
+  <div class="proto-slide">
+    <div class="ps-header">
+      <div class="ps-phase-tag">Do · Analysis Routine</div>
+      <div class="ps-title">Data Dive</div>
+      <div class="ps-subtitle">After implementing your solution, examine your evidence carefully to understand what actually happened — and why it matters.</div>
+      <div class="ps-meta">
+        <div class="ps-chip">⏱ 25 Minutes</div>
+        <div class="ps-chip">👥 Small Groups</div>
+        <div class="ps-chip">📊 After implementation</div>
+      </div>
+      <div class="ps-timer">
+        <div class="ps-timer-icon">⏱</div>
+        <div class="ps-timer-val">25</div>
+        <div class="ps-timer-lbl">MINS</div>
+      </div>
+    </div>
+    <div class="ps-body">
+      <div class="steps-row">
+        <!-- Observe -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            8 min
+          </div>
+          <div class="step-icon">🔍</div>
+          <div class="step-name">Observe the Data</div>
+          <div class="step-desc">Look at your evidence carefully — before interpreting it. Name what you see.</div>
+          <div class="step-starters">
+            <div class="starter">Name the type, title, units, and source of your data.</div>
+            <div class="starter">Share one clear observation about what the data shows.</div>
+            <div class="starter">Clarify any parts of the data that are confusing.</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Patterns -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            10 min
+          </div>
+          <div class="step-icon">📈</div>
+          <div class="step-name">Notice Patterns</div>
+          <div class="step-desc">Look across your data to find trends, surprises, or inconsistencies. Where do you see change — or no change?</div>
+          <div class="step-starters">
+            <div class="starter">What patterns or changes do we see after implementation?</div>
+            <div class="starter">Where do we see improvement? Where do we not?</div>
+            <div class="starter">Do results differ across time, people, or conditions?</div>
+            <div class="starter">What limits or inconsistencies show up?</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Claim -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            7 min
+          </div>
+          <div class="step-icon">📝</div>
+          <div class="step-name">Make a Claim</div>
+          <div class="step-desc">Individually write an evidence-based claim about what your data shows about the impact or effectiveness of your solution.</div>
+          <div class="step-starters">
+            <div class="starter">One claim about the impact of our solution: ___</div>
+            <div class="starter">Evidence that supports this claim: ___</div>
+            <div class="starter">One limit, tradeoff, or unanswered question our data raises: ___</div>
+          </div>
+        </div>
+      </div>
+      <div class="context-row">
+        <div class="ctx-card">
+          <h4>Claim Sentence Starters</h4>
+          <p><em>This likely happened because…</em><br><em>This worked best when…, which suggests…</em><br><em>This did not work in cases where…, possibly due to…</em></p>
+        </div>
+        <div class="ctx-card">
+          <h4>The Point</h4>
+          <p>A claim without evidence is just an opinion. A Data Dive helps you move from "it worked" or "it didn't" to a specific, evidence-backed explanation that others can learn from.</p>
+        </div>
+        <div class="ctx-card">
+          <h4>Remember</h4>
+          <p>Imperfect results are expected and valuable. The goal is understanding — not proving that your solution was perfect. Honest analysis of what didn't work is just as important as celebrating what did.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DATA DIVE — TEACHER -->
+<div class="deck" id="deck-dd-teacher">
+  <div class="teacher-slide">
+    <div class="ts2-header">
+      <div class="ts2-eyebrow">Teacher Background · Do</div>
+      <div class="ts2-title">Data Dive — Facilitator Guide</div>
+      <div class="ts2-sub">Analysis, evidence-based reasoning, scientific explanation · NGSS SEP 4, SEP 6 · CCSS ELA R.7 · C3 D4</div>
+    </div>
+    <div class="ts2-body">
+      <div class="t-panel">
+        <h3>Standards Alignment</h3>
+        <div class="std-row">
+          <span class="std-badge">NGSS SEP 4</span>
+          <span class="std-desc">Analyzing and interpreting data — students examine real-world data from their implementation to identify patterns, trends, and anomalies.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">NGSS SEP 6</span>
+          <span class="std-desc">Constructing explanations — the Make a Claim step produces evidence-backed explanations of impact and causal reasoning.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">CCSS R.7</span>
+          <span class="std-desc">Integrating and evaluating content in diverse formats — students interpret quantitative and qualitative data from multiple sources.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">C3 D4</span>
+          <span class="std-desc">Communicating and critiquing conclusions — students write claims and evaluate their data for limitations and competing interpretations.</span>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Why This Routine — SOLD Alignment</h3>
+        <div class="sold-row">
+          <div class="sold-item">
+            <div class="sold-letter">S</div>
+            <div class="sold-text"><strong>Social:</strong> The Observe and Notice Patterns steps are deliberately collaborative — students build a shared understanding of the data before writing individual claims. This prevents isolated or skewed interpretation.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">O</div>
+            <div class="sold-text"><strong>Ownership:</strong> Students write their own claims individually, even after group discussion. This preserves intellectual agency and prepares each scholar to defend their reasoning in Share.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">L</div>
+            <div class="sold-text"><strong>Lived Experience:</strong> The data comes from the real community challenge students have been investigating. Analysis is grounded in evidence about people and places students know and care about.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">D</div>
+            <div class="sold-text"><strong>Disciplinary Thinking:</strong> Scientists, evaluators, and policy researchers conduct exactly this kind of structured data analysis. The routine teaches authentic investigative practice.</div>
+          </div>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Marzano Connection</h3>
+        <ul>
+          <li><strong>Identifying Similarities and Differences:</strong> Notice Patterns requires comparative thinking — students examine change over time or across conditions.</li>
+          <li><strong>Generating and Testing Hypotheses:</strong> The Claim step formalizes hypothesis-testing by requiring students to pair observations with causal explanations.</li>
+          <li><strong>Note-taking and Summarizing:</strong> Students write a structured claim with evidence, practicing the synthesis moves central to academic writing and standardized assessments.</li>
+        </ul>
+      </div>
+      <div class="t-panel">
+        <h3>Facilitation Notes</h3>
+        <ul>
+          <li>Protect the Observe step — don't let students jump to explanation before they've described what the data literally shows. Prompt: "What do you see — not what you think it means yet?"</li>
+          <li>Prepare data visuals in advance when possible (a projected graph, feedback summary, or observation log) so groups don't spend the 8-min observe step just reading raw notes.</li>
+          <li>Normalize imperfect results explicitly. Say: "Finding out something didn't fully work is the most useful result you can get. That's science." This reduces defensiveness.</li>
+          <li>For younger scholars, scaffold the Claim step with a printed sentence frame sheet at each table. The three-part structure (Claim / Evidence / Limit) maps directly to disciplinary writing across subjects.</li>
+          <li>Share out one or two claims whole-class after individual writing. Ask the group to evaluate: Does the evidence actually support the claim? What questions does it raise?</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EVIDENCE SNAPSHOT — STUDENT -->
+<div class="deck" id="deck-es-student">
+  <div class="proto-slide">
+    <div class="ps-header">
+      <div class="ps-phase-tag">Do · Quick Reflection Routine</div>
+      <div class="ps-title">Evidence Snapshot</div>
+      <div class="ps-subtitle">A brief, powerful closing check-in during the implementation period to surface what matters most from today's data.</div>
+      <div class="ps-meta">
+        <div class="ps-chip">⏱ 3–5 Minutes</div>
+        <div class="ps-chip">👥 Turn &amp; Talk</div>
+        <div class="ps-chip">📅 End of each implementation session</div>
+      </div>
+      <div class="ps-timer">
+        <div class="ps-timer-icon">⏱</div>
+        <div class="ps-timer-val">3–5</div>
+        <div class="ps-timer-lbl">MINS</div>
+      </div>
+    </div>
+    <div class="ps-body">
+      <div class="steps-row">
+        <!-- Prompt 1 -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            1–2 min
+          </div>
+          <div class="step-icon">⭐</div>
+          <div class="step-name">Most Important Evidence</div>
+          <div class="step-desc">Look back at what you observed or collected today. What single piece of evidence stands out?</div>
+          <div class="step-starters">
+            <div class="starter">One piece of evidence that matters most is…</div>
+            <div class="starter">This is important because it shows…</div>
+            <div class="starter">I noticed this when…</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Prompt 2 -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            1–2 min
+          </div>
+          <div class="step-icon">😮</div>
+          <div class="step-name">What Surprised You</div>
+          <div class="step-desc">Name something that happened differently from what you expected during implementation.</div>
+          <div class="step-starters">
+            <div class="starter">One result that surprised me was…</div>
+            <div class="starter">I didn't expect…</div>
+            <div class="starter">This is worth paying attention to because…</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Next Steps -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            1 min
+          </div>
+          <div class="step-icon">➡️</div>
+          <div class="step-name">Consider Next Steps</div>
+          <div class="step-desc">Based on what you saw today, what should you do differently or pay closer attention to next time?</div>
+          <div class="step-starters">
+            <div class="starter">Next time, I want to pay closer attention to…</div>
+            <div class="starter">Based on today, we should adjust…</div>
+            <div class="starter">A question I want to answer in our next session is…</div>
+          </div>
+        </div>
+      </div>
+      <div class="context-row">
+        <div class="ctx-card">
+          <h4>When to Use It</h4>
+          <p>At the close of every Do session during the implementation period — especially when you're gathering data over multiple days. It keeps observation habits sharp and surfaces insights before they're forgotten.</p>
+        </div>
+        <div class="ctx-card">
+          <h4>Format</h4>
+          <p>Quick Turn &amp; Talk with a partner or small group. Not a full writing task — the goal is to name and hold onto what matters before you leave. Brief notes in your data log are enough.</p>
+        </div>
+        <div class="ctx-card">
+          <h4>Why It Matters</h4>
+          <p>Surprises are data. When something unexpected happens during implementation, that's often the most important thing you learned. This routine teaches you to notice and name it — not dismiss it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EVIDENCE SNAPSHOT — TEACHER -->
+<div class="deck" id="deck-es-teacher">
+  <div class="teacher-slide">
+    <div class="ts2-header">
+      <div class="ts2-eyebrow">Teacher Background · Do</div>
+      <div class="ts2-title">Evidence Snapshot — Facilitator Guide</div>
+      <div class="ts2-sub">Metacognition, observation habits, formative reflection · NGSS SEP 3 · CCSS SL.1 · C3 D3</div>
+    </div>
+    <div class="ts2-body">
+      <div class="t-panel">
+        <h3>Standards Alignment</h3>
+        <div class="std-row">
+          <span class="std-badge">NGSS SEP 3</span>
+          <span class="std-desc">Planning and carrying out investigations — daily observation during implementation is an authentic scientific practice; Evidence Snapshot builds that habit.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">CCSS SL.1</span>
+          <span class="std-desc">Collaborative discussion — the Turn &amp; Talk format requires students to articulate evidence and share observations with precision in dialogue.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">C3 D3.3</span>
+          <span class="std-desc">Gathering and evaluating sources — students prioritize and evaluate the significance of individual pieces of evidence relative to their question.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">Math SMP.6</span>
+          <span class="std-desc">Attend to precision — naming evidence precisely (what, where, when observed) builds mathematical and scientific precision habits.</span>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Why This Routine — SOLD Alignment</h3>
+        <div class="sold-row">
+          <div class="sold-item">
+            <div class="sold-letter">S</div>
+            <div class="sold-text"><strong>Social:</strong> The Turn &amp; Talk format creates a low-stakes peer conversation daily. Partners catch observations the individual missed and surface disagreements about what the data shows.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">O</div>
+            <div class="sold-text"><strong>Ownership:</strong> Students select their own "most important evidence" — this requires judgment, not recall. It treats scholars as active evaluators of their own data, not passive recorders.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">L</div>
+            <div class="sold-text"><strong>Lived Experience:</strong> Surprises during real-world implementation are often tied to community complexity — things students didn't anticipate because of assumptions. Naming surprises builds honest self-awareness.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">D</div>
+            <div class="sold-text"><strong>Disciplinary Thinking:</strong> Field researchers, social workers, and program evaluators debrief after every observation session. This routine teaches that discipline.</div>
+          </div>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Marzano Connection</h3>
+        <ul>
+          <li><strong>Reinforcing Effort and Providing Recognition:</strong> Naming "what surprised me" validates the difficulty of real-world implementation — students learn that unexpected results signal growth, not failure.</li>
+          <li><strong>Cues, Questions, and Advance Organizers:</strong> The three prompts serve as structured advance organizers for the full Data Dive — students who complete daily Evidence Snapshots arrive at the Data Dive session with richer observations.</li>
+          <li><strong>Setting Objectives:</strong> The "Consider Next Steps" prompt is a micro-planning move — it sets observation intentions for the next session and reinforces deliberate, focused data collection.</li>
+        </ul>
+      </div>
+      <div class="t-panel">
+        <h3>Facilitation Notes</h3>
+        <ul>
+          <li>Keep it genuinely quick — 3 minutes is enough if students know the prompts. Post them visibly in the room during the Do phase so no time is lost re-reading them each day.</li>
+          <li>Call on 2–3 pairs to share their "surprise" each day. This builds a class-wide observation log that can be referenced during the full Data Dive.</li>
+          <li>If students consistently have "no surprises," probe further: "What went exactly as expected? How do you know your prediction was right?"</li>
+          <li>For extended implementation periods (multi-week projects), brief weekly Data Dives can be anchored by accumulating Evidence Snapshot notes from the daily routine.</li>
+          <li>The Next Steps prompt directly feeds session planning. Consider collecting these briefly and using them to shape the next session's structure or focus.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>DEEDS Framework · RevX × Transcend · Do Phase Key Routines</p>
+</footer>
+
+<script>
+let currentView = 'student';
+let currentProto = 'title';
+
+function showDeck(name){
+  currentProto = name;
+  let deckId;
+  if(name === 'title'){
+    deckId = 'deck-title';
+  } else {
+    deckId = `deck-${name}-${currentView}`;
+  }
+  document.querySelectorAll('.deck').forEach(d=>d.classList.remove('visible'));
+  const el = document.getElementById(deckId);
+  if(el) el.classList.add('visible');
+
+  document.querySelectorAll('.np').forEach(b=>b.classList.remove('active'));
+  const idx = name==='title'?0:name==='dd'?1:2;
+  document.querySelectorAll('.np')[idx].classList.add('active');
+  
+}
+
+function setView(v,e){
+  currentView = v;
+  document.querySelectorAll('.tpill').forEach(p=>p.classList.remove('on'));
+  if(e) e.target.classList.add('on');
+  showDeck(currentProto);
+}
+
+window.addEventListener('load',()=>{
+  const h = location.hash.replace('#','');
+  if(h){
+    if(h.includes('teacher')) currentView='teacher';
+    document.querySelectorAll('.tpill').forEach((p,i)=>{
+      p.classList.toggle('on',(currentView==='student'&&i===0)||(currentView==='teacher'&&i===1));
+    });
+    const proto = h.replace('-student','').replace('-teacher','');
+    showDeck(proto||'title');
+  } else {
+    showDeck('title');
+    document.querySelectorAll('.np')[0].classList.add('active');
+  }
+});
+</script>
+</body>
+</html>

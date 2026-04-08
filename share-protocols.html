@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Share — Key Routines | DEEDS</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ph:#8C0830;--phl:#C21048;--phd:#6A0026;
+  --acc:#F06292;--acc2:#FCE8EE;
+  --ink:#1A0009;--muted:#6D3A50;--pale:#FFF5F8;
+  --white:#fff;--border:#F8BBD0;
+  --card-r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Barlow',sans-serif;background:#1A000C;color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+
+nav{background:var(--phd);display:flex;align-items:center;gap:0;padding:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+.nav-phase{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:2px;color:#fff;background:var(--ph);padding:14px 22px;text-transform:uppercase;white-space:nowrap}
+.nav-protocols{display:flex;gap:0;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-protocols::-webkit-scrollbar{display:none}
+.np{padding:14px 20px;font-size:13px;font-weight:600;color:rgba(255,255,255,.65);text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;cursor:pointer;background:none;border-left:none;border-right:none;border-top:none}
+.np:hover{color:#fff;background:rgba(255,255,255,.08)}
+.np.active{color:#fff;border-bottom:3px solid var(--acc);background:rgba(240,98,146,.15)}
+.nav-toggle{margin-left:auto;display:flex;align-items:center;gap:10px;padding:0 20px}
+.toggle-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:1px}
+.toggle-wrap{display:flex;background:rgba(255,255,255,.1);border-radius:20px;padding:3px;gap:2px}
+.tpill{font-size:11px;font-weight:700;padding:5px 14px;border-radius:16px;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.7);border:none;background:none;letter-spacing:.5px}
+.tpill.on{background:#fff;color:var(--phd)}
+
+main{flex:1;padding:0}
+.deck{display:none}
+.deck.visible{display:block}
+
+/* TITLE */
+.title-slide{min-height:calc(100vh - 51px);background:linear-gradient(145deg,#6A0026 0%,#8C0830 40%,#C21048 70%,#F06292 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.title-slide::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.ts-badge{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;letter-spacing:3px;background:rgba(255,255,255,.2);color:#fff;padding:6px 16px;border-radius:20px;text-transform:uppercase;margin-bottom:28px;border:1px solid rgba(255,255,255,.3)}
+.ts-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:96px;color:#fff;line-height:.9;text-align:center;letter-spacing:-2px}
+.ts-sub{font-size:22px;font-weight:600;color:rgba(255,255,255,.85);margin-top:18px;letter-spacing:.5px}
+.ts-logo{position:absolute;bottom:32px;right:36px;display:flex;align-items:center;gap:10px}
+.ts-logo-text{font-size:10px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:1.5px;text-transform:uppercase;text-align:right;line-height:1.4}
+.revx-badge{width:48px;height:48px;background:linear-gradient(135deg,#e91e63,#c21048);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:#fff}
+
+/* PROTO SLIDE */
+.proto-slide{min-height:calc(100vh - 51px);background:var(--pale);display:flex;flex-direction:column}
+.ps-header{background:linear-gradient(135deg,var(--phd),var(--ph));padding:36px 60px 28px;position:relative}
+.ps-phase-tag{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:10px;letter-spacing:3px;background:rgba(255,255,255,.2);color:rgba(255,255,255,.9);padding:4px 12px;border-radius:12px;display:inline-block;margin-bottom:10px;text-transform:uppercase}
+.ps-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:52px;color:#fff;line-height:1;letter-spacing:-1px}
+.ps-subtitle{font-size:16px;color:rgba(255,255,255,.8);margin-top:8px;font-weight:500;max-width:680px;line-height:1.5}
+.ps-meta{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+.ps-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.5px}
+.ps-timer{position:absolute;top:32px;right:48px;text-align:center}
+.ps-timer-icon{font-size:28px;line-height:1}
+.ps-timer-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;color:#fff;line-height:1}
+.ps-timer-lbl{font-size:10px;color:rgba(255,255,255,.7);letter-spacing:1px;font-weight:600}
+
+.ps-body{flex:1;padding:36px 60px 48px;display:flex;flex-direction:column;gap:28px}
+.steps-row{display:flex;align-items:stretch;gap:0}
+.step-card{flex:1;background:#fff;border:2.5px dashed var(--ph);border-radius:var(--card-r);padding:24px 22px;position:relative;display:flex;flex-direction:column;gap:12px}
+.step-timer{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.5px}
+.step-timer svg{opacity:.5}
+.step-icon{font-size:32px;line-height:1;margin:4px 0}
+.step-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--ink);line-height:1.1}
+.step-desc{font-size:14px;color:#4A2030;line-height:1.6}
+.step-starters{margin-top:4px;display:flex;flex-direction:column;gap:6px}
+.starter{font-size:13px;color:var(--ph);font-style:italic;padding-left:14px;border-left:3px solid var(--acc);line-height:1.45}
+.step-arrow{display:flex;align-items:center;padding:0 10px;color:var(--ph);font-size:26px;flex-shrink:0;align-self:center}
+
+.context-row{display:flex;gap:20px}
+.ctx-card{flex:1;background:#fff;border-radius:var(--card-r);padding:20px 22px;border:1px solid #F8BBD0}
+.ctx-card h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--acc);margin-bottom:8px}
+.ctx-card p{font-size:13px;color:#4A2030;line-height:1.6}
+
+/* TAG NOTE CARD */
+.tag-note{background:#fff;border-radius:var(--card-r);padding:20px 24px;border:1px solid #F8BBD0;display:flex;gap:14px;align-items:flex-start}
+.tag-note-icon{font-size:28px;flex-shrink:0}
+.tag-note-text p{font-size:13px;color:#4A2030;line-height:1.6}
+.tag-note-text strong{display:block;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--ph);margin-bottom:4px}
+
+/* TEACHER SLIDE */
+.teacher-slide{min-height:calc(100vh - 51px);background:#1A000C;display:flex;flex-direction:column}
+.ts2-header{background:linear-gradient(135deg,#6A0026,#8C0830);padding:32px 60px 24px;border-bottom:3px solid var(--acc)}
+.ts2-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--acc);text-transform:uppercase;margin-bottom:8px}
+.ts2-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:42px;color:#fff;line-height:1}
+.ts2-sub{font-size:14px;color:rgba(255,255,255,.7);margin-top:6px;font-weight:500}
+.ts2-body{flex:1;padding:36px 60px 48px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.t-panel{background:#2C000F;border-radius:var(--card-r);padding:24px 26px;border:1px solid rgba(240,98,146,.15)}
+.t-panel h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--acc);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(240,98,146,.2)}
+.t-panel p,.t-panel li{font-size:13.5px;color:rgba(255,255,255,.82);line-height:1.7}
+.t-panel ul{padding-left:18px;display:flex;flex-direction:column;gap:5px}
+.t-panel .std-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.std-badge{background:rgba(240,98,146,.15);border:1px solid rgba(240,98,146,.3);border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;color:var(--acc);white-space:nowrap;flex-shrink:0}
+.std-desc{font-size:12.5px;color:rgba(255,255,255,.7);line-height:1.5}
+.sold-row{display:flex;flex-direction:column;gap:10px}
+.sold-item{display:flex;gap:12px;align-items:flex-start}
+.sold-letter{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--ph),var(--acc));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:#fff;flex-shrink:0}
+.sold-text{font-size:13px;color:rgba(255,255,255,.82);line-height:1.55}
+.sold-text strong{color:#fff}
+
+footer{background:#100009;padding:14px 48px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06)}
+footer p{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.5px}
+
+@media(max-width:900px){
+  .ts-title{font-size:64px}
+  .ps-header,.ps-body,.ts2-header,.ts2-body{padding-left:28px;padding-right:28px}
+  .steps-row{flex-direction:column}
+  .step-arrow{transform:rotate(90deg);align-self:center;padding:6px 0}
+  .ts2-body{grid-template-columns:1fr}
+  .context-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-phase">Share</div>
+  <div class="nav-protocols">
+    <button class="np" onclick="showDeck('title')">Overview</button>
+    <button class="np" onclick="showDeck('pr')">Project Rewind</button>
+    <button class="np" onclick="showDeck('tag')">T.A.G. Feedback</button>
+  </div>
+  <div class="nav-toggle">
+    <span class="toggle-label">View</span>
+    <div class="toggle-wrap" id="viewToggle">
+      <button class="tpill on" onclick="setView('student',event)">Scholar</button>
+      <button class="tpill" onclick="setView('teacher',event)">Teacher</button>
+    </div>
+  </div>
+</nav>
+
+<!-- TITLE -->
+<div class="deck visible" id="deck-title">
+  <div class="title-slide">
+    <div class="ts-badge">DEEDS Framework</div>
+    <div class="ts-title">SHARE</div>
+    <div class="ts-sub">Key Routines</div>
+    <div class="ts-logo">
+      <div class="ts-logo-text">The Next Generation of<br><strong>CHANGE MAKERS</strong></div>
+      <img src="revx-logo.png" alt="RevX" style="width:56px;height:56px;border-radius:50%;object-fit:cover">
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT REWIND — STUDENT -->
+<div class="deck" id="deck-pr-student">
+  <div class="proto-slide">
+    <div class="ps-header">
+      <div class="ps-phase-tag">Share · Synthesis Routine</div>
+      <div class="ps-title">Project Rewind</div>
+      <div class="ps-subtitle">Before you share your story publicly, go back and trace the full journey — from what you noticed in Discover to the impact you measured in Do.</div>
+      <div class="ps-meta">
+        <div class="ps-chip">⏱ 30 Minutes</div>
+        <div class="ps-chip">🤔 Individual + Pairs</div>
+        <div class="ps-chip">📅 Session 1 of Share</div>
+      </div>
+      <div class="ps-timer">
+        <div class="ps-timer-icon">⏱</div>
+        <div class="ps-timer-val">30</div>
+        <div class="ps-timer-lbl">MINS</div>
+      </div>
+    </div>
+    <div class="ps-body">
+      <div class="steps-row">
+        <!-- Trace -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            10 min
+          </div>
+          <div class="step-icon">⏮️</div>
+          <div class="step-name">Trace Your Learning</div>
+          <div class="step-desc">Go back through your work from each DEEDS phase. For each one, jot down two things.</div>
+          <div class="step-starters">
+            <div class="starter">This work shows I now understand…</div>
+            <div class="starter">Before, I thought… but now I think…</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Reflect -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            10 min
+          </div>
+          <div class="step-icon">🪞</div>
+          <div class="step-name">Reflect (Individually or in Pairs)</div>
+          <div class="step-desc">Think about how the project shaped you — not just what you did, but who you became.</div>
+          <div class="step-starters">
+            <div class="starter">My thinking got stronger because I learned…</div>
+            <div class="starter">This project showed me I am a ___ learner.</div>
+            <div class="starter">This work matters to ___ because…</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Start Explanation -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            10 min
+          </div>
+          <div class="step-icon">✍️</div>
+          <div class="step-name">Start Your Explanation of Learning</div>
+          <div class="step-desc">Draft the opening of what you'll say during Share — using your trace and reflection as the source.</div>
+          <div class="step-starters">
+            <div class="starter">In this project, I worked on… because…</div>
+            <div class="starter">One way my thinking changed was… I know this because…</div>
+            <div class="starter">One decision, tradeoff, or impact I want to explain is…</div>
+          </div>
+        </div>
+      </div>
+      <div class="context-row">
+        <div class="ctx-card">
+          <h4>What to Bring</h4>
+          <p>Gather work from all five phases — notes, exit tickets, data, drafts. Your notebooks, task sheets, and performance tasks from each phase are your source material for this routine.</p>
+        </div>
+        <div class="ctx-card">
+          <h4>What You're Building Toward</h4>
+          <p>The Explanation of Learning is a public statement of what you know, how you know it, and why it matters. Project Rewind gives you the raw material — the evidence — to make that explanation credible and specific.</p>
+        </div>
+        <div class="ctx-card">
+          <h4>The Point</h4>
+          <p>Real expertise means being able to explain your thinking, not just show your final product. Project Rewind helps you connect the work you did to the learning you can now claim as yours.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT REWIND — TEACHER -->
+<div class="deck" id="deck-pr-teacher">
+  <div class="teacher-slide">
+    <div class="ts2-header">
+      <div class="ts2-eyebrow">Teacher Background · Share</div>
+      <div class="ts2-title">Project Rewind — Facilitator Guide</div>
+      <div class="ts2-sub">Metacognition and synthesis · NGSS SEP 6, SEP 7 · CCSS ELA SL.1, SL.4</div>
+    </div>
+    <div class="ts2-body">
+      <div class="t-panel">
+        <h3>Standards Alignment</h3>
+        <div class="std-row">
+          <span class="std-badge">NGSS SEP 6</span>
+          <span class="std-desc">Constructing explanations — students synthesize cross-phase evidence into a coherent explanation of their learning process and impact.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">NGSS SEP 7</span>
+          <span class="std-desc">Engaging in argument from evidence — students select specific work samples to support claims about their growth and their solution's effectiveness.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">CCSS SL.1</span>
+          <span class="std-desc">Collaborative discussion — the pair-reflection option supports students in processing growth through structured dialogue.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">CCSS SL.4</span>
+          <span class="std-desc">Presenting information — Project Rewind directly prepares students to organize and adapt their learning for public presentation to a diverse audience.</span>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Why This Routine — SOLD Alignment</h3>
+        <div class="sold-row">
+          <div class="sold-item">
+            <div class="sold-letter">S</div>
+            <div class="sold-text"><strong>Social:</strong> The optional pair-reflection step acknowledges that growth is often recognized through conversation. A partner can name shifts they witnessed that the individual doesn't see in themselves.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">O</div>
+            <div class="sold-text"><strong>Ownership:</strong> Students select their own evidence and craft their own explanation. They are the authors of their learning story — not passive participants reading a script.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">L</div>
+            <div class="sold-text"><strong>Lived Experience:</strong> The "This work matters to…" prompt grounds the explanation in the real community and challenge. Share is not abstract — it's rooted in actual impact.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">D</div>
+            <div class="sold-text"><strong>Disciplinary Thinking:</strong> Professionals present portfolios, defend dissertations, and explain their design process. Project Rewind teaches the metacognitive and rhetorical skills those high-stakes contexts demand.</div>
+          </div>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Marzano Connection</h3>
+        <ul>
+          <li><strong>Summarizing and Note-Taking:</strong> Trace Your Learning requires students to distill each phase into two essential ideas — a high-yield summarizing practice that improves retention and prepares synthesis.</li>
+          <li><strong>Setting Objectives and Providing Feedback:</strong> The Explanation draft created in step 3 becomes a planning document for rehearsal and revision. Share is more powerful when students know what they're trying to explain before they practice.</li>
+          <li><strong>Reinforcing Effort and Providing Recognition:</strong> The Reflect step invites students to name their growth explicitly — building self-efficacy that is rarely made visible in traditional assessments.</li>
+        </ul>
+      </div>
+      <div class="t-panel">
+        <h3>Facilitation Notes</h3>
+        <ul>
+          <li>Have students collect and physically gather their phase artifacts before Session 1 begins — notebooks, exit tickets, performance tasks. Without sources, the Trace step becomes guesswork.</li>
+          <li>Normalize that the draft in step 3 is rough. Say: "This is not your speech. It's your source material. We'll shape it in Session 2." This reduces perfectionism paralysis.</li>
+          <li>For the Reflect step, pair students strategically — ideally with someone they've worked closely with across the project. Peer recognition of growth is powerful and often more credible than teacher recognition to students.</li>
+          <li>Share out 2–3 Explanation openings from step 3 — model what "specific + evidence-based" sounds like versus "we learned a lot." This sets the standard for the full preparation session that follows.</li>
+          <li>Students who struggle with "Before I thought…/Now I think…" may need to review their early Discover work specifically. Their first Think-Feel-Act or A.S.K. Questions responses are often the clearest evidence of early thinking.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- T.A.G. FEEDBACK — STUDENT -->
+<div class="deck" id="deck-tag-student">
+  <div class="proto-slide">
+    <div class="ps-header">
+      <div class="ps-phase-tag">Share · Rehearsal Routine</div>
+      <div class="ps-title">T.A.G. Feedback</div>
+      <div class="ps-subtitle">After drafting your Explanation of Learning, rehearse with a partner and give each other structured feedback to strengthen your presentation before the public Share.</div>
+      <div class="ps-meta">
+        <div class="ps-chip">⏱ 15 Minutes</div>
+        <div class="ps-chip">👥 Pairs</div>
+        <div class="ps-chip">📅 Session 2 — after drafting</div>
+      </div>
+      <div class="ps-timer">
+        <div class="ps-timer-icon">⏱</div>
+        <div class="ps-timer-val">15</div>
+        <div class="ps-timer-lbl">MINS</div>
+      </div>
+    </div>
+    <div class="ps-body">
+      <div class="steps-row">
+        <!-- Tell -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            5 min
+          </div>
+          <div class="step-icon">💛</div>
+          <div class="step-name">Tell Something That's Working</div>
+          <div class="step-desc">After listening to the rehearsal, name one specific strength in how the presenter is explaining their learning.</div>
+          <div class="step-starters">
+            <div class="starter">I understood your learning clearly when you said…</div>
+            <div class="starter">The evidence you used was strong because…</div>
+            <div class="starter">I could see your growth when you explained…</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Ask -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            5 min
+          </div>
+          <div class="step-icon">❓</div>
+          <div class="step-name">Ask a Question</div>
+          <div class="step-desc">Ask something that pushes the presenter to go deeper — the kinds of questions a real audience member might ask during Share.</div>
+          <div class="step-starters">
+            <div class="starter">Can you say more about why you made that decision?</div>
+            <div class="starter">How do you know your solution had that impact?</div>
+            <div class="starter">What would you do differently if you did this again?</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Give -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            5 min
+          </div>
+          <div class="step-icon">💡</div>
+          <div class="step-name">Give a Suggestion</div>
+          <div class="step-desc">Offer one concrete suggestion to make the Explanation clearer, more specific, or more compelling to an outside audience.</div>
+          <div class="step-starters">
+            <div class="starter">It might help the audience to understand if you…</div>
+            <div class="starter">Could you add a specific example to the part where…</div>
+            <div class="starter">Consider connecting your evidence to the challenge more directly by…</div>
+          </div>
+        </div>
+      </div>
+      <div class="tag-note">
+        <div class="tag-note-icon">🔁</div>
+        <div class="tag-note-text">
+          <strong>Same Routine, New Context</strong>
+          <p>You've used T.A.G. Feedback in Engineer to improve your design plans. Here, the same structure helps you improve your <em>explanation</em> — the way you communicate your thinking, evidence, and growth. The logic is the same: be specific, be honest, be helpful.</p>
+        </div>
+      </div>
+      <div class="context-row">
+        <div class="ctx-card">
+          <h4>The Presenter's Job</h4>
+          <p>Stay in listening mode during T and A. Write down feedback rather than responding to it. You decide later what to keep, revise, or let go — this is your story.</p>
+        </div>
+        <div class="ctx-card">
+          <h4>The Reviewer's Job</h4>
+          <p>Listen as if you're an audience member who doesn't already know what happened. When something is unclear, that's a gift — say so. Your job is to help the presenter be understood, not just praised.</p>
+        </div>
+        <div class="ctx-card">
+          <h4>After TAG</h4>
+          <p>Take 5–8 minutes to revise your Explanation draft based on the feedback. Even one specific revision before Share will make a difference in how confident and clear you feel.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- T.A.G. FEEDBACK — TEACHER -->
+<div class="deck" id="deck-tag-teacher">
+  <div class="teacher-slide">
+    <div class="ts2-header">
+      <div class="ts2-eyebrow">Teacher Background · Share</div>
+      <div class="ts2-title">T.A.G. Feedback (Share) — Facilitator Guide</div>
+      <div class="ts2-sub">Analysis, inquiry, communicative precision · NGSS SEP 8 · CCSS.ELA-LITERACY.SL.1, SL.4</div>
+    </div>
+    <div class="ts2-body">
+      <div class="t-panel">
+        <h3>Standards Alignment</h3>
+        <div class="std-row">
+          <span class="std-badge">NGSS SEP 8</span>
+          <span class="std-desc">Obtaining, evaluating, and communicating information — reviewers evaluate the clarity, accuracy, and evidence-quality of a peer's public explanation.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">CCSS SL.1</span>
+          <span class="std-desc">Collaborative discussion — students practice the listening and dialogic skills required to engage with an outside audience during Share.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">CCSS SL.4</span>
+          <span class="std-desc">Presenting information — feedback directly targets clarity and organization of the Explanation, building toward a polished public performance.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">CCSS W.5</span>
+          <span class="std-desc">Developing writing through revision — the feedback cycle produces revised Explanation drafts, treating the presentation as a writing/speaking product that benefits from iteration.</span>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Why This Routine — SOLD Alignment</h3>
+        <div class="sold-row">
+          <div class="sold-item">
+            <div class="sold-letter">S</div>
+            <div class="sold-text"><strong>Social:</strong> Rehearsing with a partner replicates the social dynamics of the actual Share event. Feedback from a peer is often more useful than teacher feedback at this stage — and teaches students to receive critique professionally.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">O</div>
+            <div class="sold-text"><strong>Ownership:</strong> The presenter decides what to revise. This preserves authorship — Share is their story, and TAG gives them expert input without prescribing the outcome.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">L</div>
+            <div class="sold-text"><strong>Lived Experience:</strong> Ask questions simulate the perspective of a real audience member who doesn't share the student's context. This helps students bridge the gap between insider knowledge and public communication.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">D</div>
+            <div class="sold-text"><strong>Disciplinary Thinking:</strong> Before public presentations, researchers, designers, and professionals conduct peer reviews of their talks. TAG at the rehearsal stage is authentic disciplinary practice.</div>
+          </div>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Marzano Connection</h3>
+        <ul>
+          <li><strong>Providing Feedback:</strong> TAGs in this context target communication quality — specificity, evidence use, and audience awareness — all of which are formative feedback categories that transfer to standardized writing and speaking tasks.</li>
+          <li><strong>Reinforcing Effort:</strong> The Tell step ensures that rehearsals start with genuine recognition. Students who feel heard are more likely to revise authentically rather than defensively.</li>
+          <li><strong>Cooperative Learning:</strong> The structured pair format prevents performance anxiety — when everyone is a reviewer and a presenter, the social stakes are equalized.</li>
+        </ul>
+      </div>
+      <div class="t-panel">
+        <h3>Facilitation Notes</h3>
+        <ul>
+          <li>Brief reviewers on what makes a Share Explanation strong before TAG begins — clarity, specificity, evidence use, and growth reflection. Give them the Share Feedback Checklist as a guide.</li>
+          <li>Model a full TAG round with a volunteer presenter before pairs break out. Show what a strong Ask question sounds like — students often default to simple clarification questions rather than probing ones.</li>
+          <li>Protect the revision time after TAG. Even 5 minutes of focused revision is worth more than additional rehearsal without reflection.</li>
+          <li>Consider inviting a community partner or parent to participate as a TAG reviewer. Their perspective as an outsider makes Ask questions especially valuable — they literally don't know the context, which mirrors the real audience.</li>
+          <li>For students who freeze in the presenter role, allow them to share in the T step first (as reviewer), then switch. Naming strengths in someone else's explanation often helps students see what's possible in their own.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>DEEDS Framework · RevX × Transcend · Share Phase Key Routines</p>
+</footer>
+
+<script>
+let currentView = 'student';
+let currentProto = 'title';
+
+function showDeck(name){
+  currentProto = name;
+  let deckId;
+  if(name === 'title'){
+    deckId = 'deck-title';
+  } else {
+    deckId = `deck-${name}-${currentView}`;
+  }
+  document.querySelectorAll('.deck').forEach(d=>d.classList.remove('visible'));
+  const el = document.getElementById(deckId);
+  if(el) el.classList.add('visible');
+
+  document.querySelectorAll('.np').forEach(b=>b.classList.remove('active'));
+  const idx = name==='title'?0:name==='pr'?1:2;
+  document.querySelectorAll('.np')[idx].classList.add('active');
+  
+}
+
+function setView(v,e){
+  currentView = v;
+  document.querySelectorAll('.tpill').forEach(p=>p.classList.remove('on'));
+  if(e) e.target.classList.add('on');
+  showDeck(currentProto);
+}
+
+window.addEventListener('load',()=>{
+  const h = location.hash.replace('#','');
+  if(h){
+    if(h.includes('teacher')) currentView='teacher';
+    document.querySelectorAll('.tpill').forEach((p,i)=>{
+      p.classList.toggle('on',(currentView==='student'&&i===0)||(currentView==='teacher'&&i===1));
+    });
+    const proto = h.replace('-student','').replace('-teacher','');
+    showDeck(proto||'title');
+  } else {
+    showDeck('title');
+    document.querySelectorAll('.np')[0].classList.add('active');
+  }
+});
+</script>
+</body>
+</html>

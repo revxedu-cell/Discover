@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Engineer — Thinking Routines | DEEDS</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ph:#1565C0;--phl:#1976D2;--phd:#0D47A1;
+  --acc:#42A5F5;--acc2:#E3F2FD;
+  --ink:#0D1B2A;--muted:#546E7A;--pale:#F0F4FF;
+  --white:#fff;--border:#B0BEC5;
+  --card-r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Barlow',sans-serif;background:#0D1B2A;color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+
+/* ── NAV ── */
+nav{background:var(--phd);display:flex;align-items:center;gap:0;padding:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+.nav-phase{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:2px;color:#fff;background:var(--ph);padding:14px 22px;text-transform:uppercase;white-space:nowrap}
+.nav-protocols{display:flex;gap:0;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-protocols::-webkit-scrollbar{display:none}
+.np{padding:14px 20px;font-size:13px;font-weight:600;color:rgba(255,255,255,.65);text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;cursor:pointer;background:none;border-left:none;border-right:none;border-top:none}
+.np:hover{color:#fff;background:rgba(255,255,255,.08)}
+.np.active{color:#fff;border-bottom:3px solid var(--acc);background:rgba(66,165,245,.15)}
+.nav-toggle{margin-left:auto;display:flex;align-items:center;gap:10px;padding:0 20px}
+.toggle-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:1px}
+.toggle-wrap{display:flex;background:rgba(255,255,255,.1);border-radius:20px;padding:3px;gap:2px}
+.tpill{font-size:11px;font-weight:700;padding:5px 14px;border-radius:16px;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.7);border:none;background:none;letter-spacing:.5px}
+.tpill.on{background:#fff;color:var(--phd)}
+
+/* ── SLIDE CONTAINER ── */
+main{flex:1;padding:0}
+.deck{display:none}
+.deck.visible{display:block}
+
+/* ── TITLE SLIDE ── */
+.title-slide{min-height:calc(100vh - 51px);background:linear-gradient(145deg,#0D47A1 0%,#1565C0 40%,#1976D2 70%,#42A5F5 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.title-slide::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.ts-badge{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;letter-spacing:3px;background:rgba(255,255,255,.2);color:#fff;padding:6px 16px;border-radius:20px;text-transform:uppercase;margin-bottom:28px;border:1px solid rgba(255,255,255,.3)}
+.ts-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:96px;color:#fff;line-height:.9;text-align:center;letter-spacing:-2px}
+.ts-sub{font-size:22px;font-weight:600;color:rgba(255,255,255,.85);margin-top:18px;letter-spacing:.5px}
+.ts-logo{position:absolute;bottom:32px;right:36px;display:flex;align-items:center;gap:10px}
+.ts-logo-text{font-size:10px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:1.5px;text-transform:uppercase;text-align:right;line-height:1.4}
+.revx-badge{width:48px;height:48px;background:linear-gradient(135deg,#e91e63,#c21048);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:#fff}
+
+/* ── PROTOCOL SLIDE ── */
+.proto-slide{min-height:calc(100vh - 51px);background:var(--pale);display:flex;flex-direction:column}
+.ps-header{background:linear-gradient(135deg,var(--phd),var(--ph));padding:36px 60px 28px;position:relative}
+.ps-phase-tag{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:10px;letter-spacing:3px;background:rgba(255,255,255,.2);color:rgba(255,255,255,.9);padding:4px 12px;border-radius:12px;display:inline-block;margin-bottom:10px;text-transform:uppercase}
+.ps-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:52px;color:#fff;line-height:1;letter-spacing:-1px}
+.ps-subtitle{font-size:16px;color:rgba(255,255,255,.8);margin-top:8px;font-weight:500;max-width:680px;line-height:1.5}
+.ps-meta{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+.ps-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.5px}
+.ps-timer{position:absolute;top:32px;right:48px;text-align:center}
+.ps-timer-icon{font-size:28px;line-height:1}
+.ps-timer-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;color:#fff;line-height:1}
+.ps-timer-lbl{font-size:10px;color:rgba(255,255,255,.7);letter-spacing:1px;font-weight:600}
+
+/* ── STEPS ── */
+.ps-body{flex:1;padding:36px 60px 48px;display:flex;flex-direction:column;gap:28px}
+.steps-row{display:flex;align-items:stretch;gap:0}
+.step-card{flex:1;background:#fff;border:2.5px dashed var(--ph);border-radius:var(--card-r);padding:24px 22px;position:relative;display:flex;flex-direction:column;gap:12px}
+.step-timer{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.5px}
+.step-timer svg{opacity:.5}
+.step-icon{font-size:32px;line-height:1;margin:4px 0}
+.step-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--ink);line-height:1.1}
+.step-desc{font-size:14px;color:#37474F;line-height:1.6}
+.step-starters{margin-top:4px;display:flex;flex-direction:column;gap:6px}
+.starter{font-size:13px;color:var(--ph);font-style:italic;padding-left:14px;border-left:3px solid var(--acc);line-height:1.45}
+.step-arrow{display:flex;align-items:center;padding:0 10px;color:var(--ph);font-size:26px;flex-shrink:0;align-self:center}
+
+/* ── CONTEXT ROW ── */
+.context-row{display:flex;gap:20px}
+.ctx-card{flex:1;background:#fff;border-radius:var(--card-r);padding:20px 22px;border:1px solid #DDEEFF}
+.ctx-card h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--acc);margin-bottom:8px}
+.ctx-card p{font-size:13px;color:#37474F;line-height:1.6}
+
+/* ── TEACHER SLIDE ── */
+.teacher-slide{min-height:calc(100vh - 51px);background:#0D1B2A;display:flex;flex-direction:column}
+.ts2-header{background:linear-gradient(135deg,#0D47A1,#1565C0);padding:32px 60px 24px;border-bottom:3px solid var(--acc)}
+.ts2-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--acc);text-transform:uppercase;margin-bottom:8px}
+.ts2-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:42px;color:#fff;line-height:1}
+.ts2-sub{font-size:14px;color:rgba(255,255,255,.7);margin-top:6px;font-weight:500}
+.ts2-body{flex:1;padding:36px 60px 48px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.t-panel{background:#13253A;border-radius:var(--card-r);padding:24px 26px;border:1px solid rgba(66,165,245,.15)}
+.t-panel h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--acc);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(66,165,245,.2)}
+.t-panel p,.t-panel li{font-size:13.5px;color:rgba(255,255,255,.82);line-height:1.7}
+.t-panel ul{padding-left:18px;display:flex;flex-direction:column;gap:5px}
+.t-panel .std-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.std-badge{background:rgba(66,165,245,.15);border:1px solid rgba(66,165,245,.3);border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;color:var(--acc);white-space:nowrap;flex-shrink:0}
+.std-desc{font-size:12.5px;color:rgba(255,255,255,.7);line-height:1.5}
+.sold-row{display:flex;flex-direction:column;gap:10px}
+.sold-item{display:flex;gap:12px;align-items:flex-start}
+.sold-letter{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--ph),var(--acc));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:#fff;flex-shrink:0}
+.sold-text{font-size:13px;color:rgba(255,255,255,.82);line-height:1.55}
+.sold-text strong{color:#fff}
+
+/* ── FOOTER ── */
+footer{background:#071220;padding:14px 48px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06)}
+footer p{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.5px}
+.ft-nav{display:flex;gap:6px}
+.ft-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:background .2s}
+.ft-dot.on{background:var(--acc)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .ts-title{font-size:64px}
+  .ps-header,.ps-body,.ts2-header,.ts2-body{padding-left:28px;padding-right:28px}
+  .steps-row{flex-direction:column}
+  .step-arrow{transform:rotate(90deg);align-self:center;padding:6px 0}
+  .ts2-body{grid-template-columns:1fr}
+  .context-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-phase">Engineer</div>
+  <div class="nav-protocols">
+    <button class="np" onclick="showDeck('title')">Overview</button>
+    <button class="np" onclick="showDeck('tag-student')">T.A.G. Feedback</button>
+    <button class="np" onclick="showDeck('pp-student')">Production Plan</button>
+  </div>
+  <div class="nav-toggle">
+    <span class="toggle-label">View</span>
+    <div class="toggle-wrap" id="viewToggle">
+      <button class="tpill on" onclick="setView('student')">Scholar</button>
+      <button class="tpill" onclick="setView('teacher')">Teacher</button>
+    </div>
+  </div>
+</nav>
+
+<!-- TITLE DECK -->
+<div class="deck visible" id="deck-title">
+  <div class="title-slide">
+    <div class="ts-badge">DEEDS Framework</div>
+    <div class="ts-title">ENGINEER</div>
+    <div class="ts-sub">Thinking Routines</div>
+    <div class="ts-logo">
+      <div class="ts-logo-text">The Next Generation of<br><strong>CHANGE MAKERS</strong></div>
+      <img src="revx-logo.png" alt="RevX" style="width:56px;height:56px;border-radius:50%;object-fit:cover">
+    </div>
+  </div>
+</div>
+
+<!-- T.A.G. FEEDBACK — STUDENT -->
+<div class="deck" id="deck-tag-student">
+  <div class="proto-slide">
+    <div class="ps-header">
+      <div class="ps-phase-tag">Engineer · Thinking Routine</div>
+      <div class="ps-title">T.A.G. Feedback</div>
+      <div class="ps-subtitle">Share your draft plan with another team and/or a professional mentor, then give and receive structured feedback.</div>
+      <div class="ps-meta">
+        <div class="ps-chip">⏱ 15 Minutes</div>
+        <div class="ps-chip">👥 Pairs or Small Groups</div>
+        <div class="ps-chip">📋 After planning, before building</div>
+      </div>
+      <div class="ps-timer">
+        <div class="ps-timer-icon">⏱</div>
+        <div class="ps-timer-val">15</div>
+        <div class="ps-timer-lbl">MINS</div>
+      </div>
+    </div>
+    <div class="ps-body">
+      <div class="steps-row">
+        <!-- Tell -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            5 min
+          </div>
+          <div class="step-icon">💛</div>
+          <div class="step-name">Tell Something That's Working</div>
+          <div class="step-desc">Name a specific strength in the design you're reviewing.</div>
+          <div class="step-starters">
+            <div class="starter">One strength of this design is…</div>
+            <div class="starter">This part clearly meets the criteria because…</div>
+            <div class="starter">I can see you considered ___ when you…</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Ask -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            5 min
+          </div>
+          <div class="step-icon">❓</div>
+          <div class="step-name">Ask a Question</div>
+          <div class="step-desc">Ask something that pushes the designer to think more deeply about feasibility or real-world function.</div>
+          <div class="step-starters">
+            <div class="starter">Is this realistic given the materials?</div>
+            <div class="starter">How will this function under the stated constraints?</div>
+            <div class="starter">What might fail first? Have you considered…?</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Give -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            5 min
+          </div>
+          <div class="step-icon">💡</div>
+          <div class="step-name">Give a Suggestion</div>
+          <div class="step-desc">Offer one concrete improvement to strengthen feasibility, usability, safety, durability, or alignment with the criteria.</div>
+          <div class="step-starters">
+            <div class="starter">You might improve this by…</div>
+            <div class="starter">Consider adjusting…</div>
+            <div class="starter">It may be stronger if…</div>
+          </div>
+        </div>
+      </div>
+      <div class="context-row">
+        <div class="ctx-card">
+          <h4>When to Use It</h4>
+          <p>After teams have developed their design plans and before they begin building. Can also be used mid-build when a team is stuck or wants to stress-test a decision.</p>
+        </div>
+        <div class="ctx-card">
+          <h4>Remember</h4>
+          <p>Feedback is a gift. Stay specific — vague comments like "looks good" or "I don't get it" don't help anyone improve. The goal is to make the design stronger, not to be nice or mean.</p>
+        </div>
+        <div class="ctx-card">
+          <h4>Roles</h4>
+          <p><strong>Presenter:</strong> Share your plan clearly. Listen without interrupting.<br><strong>Reviewer:</strong> Follow the TAG structure. Be honest and specific.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- T.A.G. FEEDBACK — TEACHER -->
+<div class="deck" id="deck-tag-teacher">
+  <div class="teacher-slide">
+    <div class="ts2-header">
+      <div class="ts2-eyebrow">Teacher Background · Engineer</div>
+      <div class="ts2-title">T.A.G. Feedback — Facilitator Guide</div>
+      <div class="ts2-sub">Analysis, inquiry, and structured peer critique · NGSS SEP 8 · CCSS.ELA-LITERACY.SL.1</div>
+    </div>
+    <div class="ts2-body">
+      <div class="t-panel">
+        <h3>Standards Alignment</h3>
+        <div class="std-row">
+          <span class="std-badge">NGSS SEP 8</span>
+          <span class="std-desc">Obtaining, evaluating, and communicating information — students analyze designs against criteria and communicate evaluation in structured form.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">CCSS SL.1</span>
+          <span class="std-desc">Collaborative discussion — students engage with diverse partners, build on others' ideas, and express their own clearly.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">NGSS ETS1-2</span>
+          <span class="std-desc">Evaluating solutions using criteria and constraints — the feedback structure prompts reviewers to evaluate feasibility and alignment explicitly.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">C3 D4.6</span>
+          <span class="std-desc">Constructing explanations and arguments — students justify their feedback with evidence from the design.</span>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Why This Routine — SOLD Alignment</h3>
+        <div class="sold-row">
+          <div class="sold-item">
+            <div class="sold-letter">S</div>
+            <div class="sold-text"><strong>Social:</strong> Learning happens through structured peer dialogue. TAG gives students a shared language for critique, making feedback feel safe and purposeful rather than personal.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">O</div>
+            <div class="sold-text"><strong>Ownership:</strong> Designers retain agency — they receive input but decide what to accept, revise, or reject. This mirrors authentic professional practice.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">L</div>
+            <div class="sold-text"><strong>Lived Experience:</strong> Students bring their knowledge of the community and challenge context to their questions and suggestions, grounding critique in real stakes.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">D</div>
+            <div class="sold-text"><strong>Disciplinary Thinking:</strong> Engineers and designers routinely peer-review plans before production. TAG authentically replicates this professional norm.</div>
+          </div>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Marzano Connection</h3>
+        <ul>
+          <li><strong>Providing Feedback:</strong> TAG externalizes the feedback process — students learn to give the kind of specific, criteria-referenced feedback that research shows accelerates learning.</li>
+          <li><strong>Cooperative Learning:</strong> The structured partner format prevents dominance; all voices participate in a predictable, equitable sequence.</li>
+          <li><strong>Generating & Testing Hypotheses:</strong> Ask questions probe design assumptions, asking reviewers to predict failure modes and test feasibility claims.</li>
+        </ul>
+      </div>
+      <div class="t-panel">
+        <h3>Facilitation Notes</h3>
+        <ul>
+          <li>Model TAG once with a volunteer presenter before student pairs start — especially the Ask step, which students often default to criticism rather than genuine questions.</li>
+          <li>Require the designer to stay silent during T and A. Give them a notes sheet to capture feedback. This prevents defensive back-and-forth.</li>
+          <li>With younger scholars, scaffold the Tell step first by having the whole class identify one strength before pairs separate.</li>
+          <li>Invite professional partners to serve as reviewers. Brief them on the TAG protocol beforehand so their feedback follows the same structure.</li>
+          <li>After TAG, give 5–8 minutes for teams to revise their plan before building. Don't skip this — the revision moment is where learning consolidates.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTION PLAN — STUDENT -->
+<div class="deck" id="deck-pp-student">
+  <div class="proto-slide">
+    <div class="ps-header">
+      <div class="ps-phase-tag">Engineer · Daily Routine</div>
+      <div class="ps-title">Production Plan</div>
+      <div class="ps-subtitle">At the start of every build session, set your team up for focused, effective work by checking in on three things.</div>
+      <div class="ps-meta">
+        <div class="ps-chip">⏱ 5–10 Minutes</div>
+        <div class="ps-chip">👥 Team</div>
+        <div class="ps-chip">📅 Daily — every build session</div>
+      </div>
+      <div class="ps-timer">
+        <div class="ps-timer-icon">⏱</div>
+        <div class="ps-timer-val">5–10</div>
+        <div class="ps-timer-lbl">MINS</div>
+      </div>
+    </div>
+    <div class="ps-body">
+      <div class="steps-row">
+        <!-- Check Criteria -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            2–3 min
+          </div>
+          <div class="step-icon">✅</div>
+          <div class="step-name">Check Criteria &amp; Constraints</div>
+          <div class="step-desc">Review what your solution needs to do and what limits you're working within.</div>
+          <div class="step-starters">
+            <div class="starter">How well are we meeting our criteria?</div>
+            <div class="starter">Which criteria or constraints do we most need to focus on today?</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Set Goals -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            2–3 min
+          </div>
+          <div class="step-icon">🎯</div>
+          <div class="step-name">Set Goals &amp; Make a Plan</div>
+          <div class="step-desc">Decide what you'll accomplish today and who does what. Log your goal in your Daily Log.</div>
+          <div class="step-starters">
+            <div class="starter">What is our best next step?</div>
+            <div class="starter">What do we want to get done by the end of today?</div>
+            <div class="starter">Who will do what?</div>
+          </div>
+        </div>
+        <div class="step-arrow">›</div>
+        <!-- Process Check -->
+        <div class="step-card">
+          <div class="step-timer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L11 14V7h1.5v6.25l4.52 2.67-1.03 1.58z"/></svg>
+            1–3 min
+          </div>
+          <div class="step-icon">🤝</div>
+          <div class="step-name">Process Check</div>
+          <div class="step-desc">Briefly check in on how your team is working together before diving in.</div>
+          <div class="step-starters">
+            <div class="starter">What's working well on our team?</div>
+            <div class="starter">What might we need to adjust?</div>
+            <div class="starter">What do we need from each other today?</div>
+          </div>
+        </div>
+      </div>
+      <div class="context-row">
+        <div class="ctx-card">
+          <h4>When to Use It</h4>
+          <p>Every single build session, at the very start. Even on days when you feel like you already know the plan — checking in keeps the team aligned and accountable to the criteria.</p>
+        </div>
+        <div class="ctx-card">
+          <h4>The Point</h4>
+          <p>Rushing into building without a plan wastes time and materials. The Production Plan helps you work like a real professional: deliberate, criteria-focused, and aware of your teammates.</p>
+        </div>
+        <div class="ctx-card">
+          <h4>Where to Record It</h4>
+          <p>Use the Daily Log in your Engineer Team Notebook. Record your goal for the day before you start building. At the end of the session, note what you completed and what's next.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTION PLAN — TEACHER -->
+<div class="deck" id="deck-pp-teacher">
+  <div class="teacher-slide">
+    <div class="ts2-header">
+      <div class="ts2-eyebrow">Teacher Background · Engineer</div>
+      <div class="ts2-title">Production Plan — Facilitator Guide</div>
+      <div class="ts2-sub">Strategic planning, collaboration, metacognition · NGSS SEP 6 · CCSS.ELA-LITERACY.W.5 · C3 D4</div>
+    </div>
+    <div class="ts2-body">
+      <div class="t-panel">
+        <h3>Standards Alignment</h3>
+        <div class="std-row">
+          <span class="std-badge">NGSS SEP 6</span>
+          <span class="std-desc">Constructing explanations and designing solutions — daily planning against criteria mirrors the iterative design process in authentic engineering.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">CCSS W.5</span>
+          <span class="std-desc">Production and distribution of writing — students develop and strengthen planning through reflection and revision of their daily logs over time.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">C3 D4</span>
+          <span class="std-desc">Taking informed action — students translate criteria knowledge into actionable, coordinated work steps each session.</span>
+        </div>
+        <div class="std-row">
+          <span class="std-badge">Math MP.6</span>
+          <span class="std-desc">Attend to precision — the criteria check develops habits of precision in materials, measurements, and fit-to-standard.</span>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Why This Routine — SOLD Alignment</h3>
+        <div class="sold-row">
+          <div class="sold-item">
+            <div class="sold-letter">S</div>
+            <div class="sold-text"><strong>Social:</strong> The Process Check is explicitly relational — it names team health as a daily priority, not just task completion. This reduces friction before it escalates.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">O</div>
+            <div class="sold-text"><strong>Ownership:</strong> Students set their own daily goals rather than following a teacher-issued task list. This builds executive function and professional self-management.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">L</div>
+            <div class="sold-text"><strong>Lived Experience:</strong> Criteria connect to the real community challenge. Checking them daily grounds the build in purpose — it's not an abstract project, it's a response to real people.</div>
+          </div>
+          <div class="sold-item">
+            <div class="sold-letter">D</div>
+            <div class="sold-text"><strong>Disciplinary Thinking:</strong> Real engineers begin every work session by reviewing specs, setting tasks, and checking team status. This routine teaches professional practice authentically.</div>
+          </div>
+        </div>
+      </div>
+      <div class="t-panel">
+        <h3>Marzano Connection</h3>
+        <ul>
+          <li><strong>Setting Objectives:</strong> Daily goal-setting against criteria is one of Marzano's highest-yield strategies. Students who set specific session goals outperform those given open build time.</li>
+          <li><strong>Reinforcing Effort:</strong> The Process Check surfaces collaboration patterns and gives students language to name and address effort challenges within the team.</li>
+          <li><strong>Cooperative Learning:</strong> Role clarity (who does what) within the structured check-in prevents the "one person does everything" problem common in group work.</li>
+        </ul>
+      </div>
+      <div class="t-panel">
+        <h3>Facilitation Notes</h3>
+        <ul>
+          <li>Protect this time — 5–10 minutes of upfront planning consistently outperforms unstructured build starts. Announce and enforce it as a non-negotiable.</li>
+          <li>Circulate during the Production Plan and use what you hear to target your coaching during the build session. Teams who set vague goals need tighter accountability.</li>
+          <li>Reference the criteria explicitly when teams check in. Prompt: "Show me in your criteria which one you're working toward today."</li>
+          <li>For younger scholars, provide a simple Production Plan card at each table with the three prompts printed. They can write directly on it each day.</li>
+          <li>At the end of sessions, invite one or two teams to share what they completed. This public accountability reinforces the planning habit.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>DEEDS Framework · RevX × Transcend · Engineer Phase Thinking Routines</p>
+  <div class="ft-nav" id="footerNav"></div>
+</footer>
+
+<script>
+const PROTOCOLS = ['tag','pp'];
+const DECKS_STUDENT = ['title','tag-student','pp-student'];
+const DECKS_TEACHER = ['title','tag-teacher','pp-teacher'];
+let currentView = 'student';
+let currentProto = 'title';
+
+function showDeck(name){
+  currentProto = name;
+  const base = name === 'title' ? 'title' : name.replace(/-student|-teacher/,'');
+  // determine which deck to show
+  let deckId;
+  if(name === 'title'){
+    deckId = 'deck-title';
+  } else {
+    deckId = `deck-${base}-${currentView}`;
+  }
+  document.querySelectorAll('.deck').forEach(d=>d.classList.remove('visible'));
+  const el = document.getElementById(deckId);
+  if(el) el.classList.add('visible');
+
+  // nav highlight
+  document.querySelectorAll('.np').forEach(b=>b.classList.remove('active'));
+  if(name==='title') document.querySelectorAll('.np')[0].classList.add('active');
+  else if(base==='tag') document.querySelectorAll('.np')[1].classList.add('active');
+  else if(base==='pp') document.querySelectorAll('.np')[2].classList.add('active');
+
+  updateHash(deckId);
+}
+
+function setView(v){
+  currentView = v;
+  document.querySelectorAll('.tpill').forEach(p=>p.classList.remove('on'));
+  event.target.classList.add('on');
+  // re-show current protocol in new view
+  showDeck(currentProto);
+}
+
+function updateHash(id){
+  
+}
+
+// Read hash on load
+window.addEventListener('load',()=>{
+  const h = location.hash.replace('#','');
+  if(h){
+    if(h.includes('teacher')) setViewSilent('teacher');
+    const proto = h.replace('-student','').replace('-teacher','').replace('deck-','');
+    showDeck(proto === 'title' ? 'title' : proto);
+  } else {
+    showDeck('title');
+    document.querySelectorAll('.np')[0].classList.add('active');
+  }
+});
+
+function setViewSilent(v){
+  currentView = v;
+  document.querySelectorAll('.tpill').forEach((p,i)=>{
+    p.classList.toggle('on', (v==='student'&&i===0)||(v==='teacher'&&i===1));
+  });
+}
+</script>
+</body>
+</html>
