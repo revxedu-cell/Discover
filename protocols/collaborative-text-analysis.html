@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Collaborative Text Analysis — DEEDS Examine Protocol</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --phase:#0a7a14; --phase-light:#e8f7ea; --phase-mid:#bbf7d0; --phase-dark:#065f0c;
+  --amber:#F59E0B; --amber-light:#FEF3C7;
+  --text:#072b0a; --text-mid:#3d6b43; --text-soft:#6b9b72;
+  --border:#d4ead6; --bg:#f0faf1; --white:#fff;
+  --m-ind-bg:#EFF6FF; --m-ind-b:#BFDBFE; --m-ind-t:#1D4ED8;
+  --m-pair-bg:#F0FDF4; --m-pair-b:#BBF7D0; --m-pair-t:#15803D;
+  --m-sm-bg:#FAF5FF; --m-sm-b:#DDD6FE; --m-sm-t:#6D28D9;
+  --m-wh-bg:#FFF7ED; --m-wh-b:#FED7AA; --m-wh-t:#C2410C;
+  --t-bg:#072b0a; --t-s:rgba(255,255,255,.06); --t-l:rgba(255,255,255,.09);
+  --t-text:rgba(255,255,255,.88); --t-soft:rgba(255,255,255,.55);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Nunito Sans',sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+
+/* ── TOPBAR ── */
+.topbar {
+  position:sticky; top:0; z-index:50; background:white;
+  border-bottom:1px solid var(--border);
+  padding:9px 20px; display:flex; align-items:center;
+  justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+.tl { display:flex; align-items:center; gap:9px; }
+.phase-pill { font-family:'Nunito',sans-serif; font-weight:900; font-size:11px; letter-spacing:.15em; color:white; background:var(--phase); padding:4px 11px; border-radius:5px; }
+.deck-label { font-family:'Nunito',sans-serif; font-weight:700; font-size:13px; color:var(--text-mid); }
+.nav-area { display:flex; align-items:center; gap:9px; }
+.nav-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text-mid); font-size:14px; transition:all .15s; }
+.nav-btn:hover:not(:disabled) { border-color:var(--phase); color:var(--phase); }
+.nav-btn:disabled { opacity:.3; cursor:not-allowed; }
+.slide-ctr { font-family:'Nunito',sans-serif; font-weight:800; font-size:13px; color:var(--text-mid); min-width:40px; text-align:center; }
+.ctrl-area { display:flex; align-items:center; gap:8px; }
+.tg { display:flex; background:var(--bg); border-radius:7px; padding:3px; gap:2px; }
+.tb { font-family:'Nunito',sans-serif; font-weight:700; font-size:11px; padding:4px 10px; border:none; border-radius:5px; cursor:pointer; background:transparent; color:var(--text-soft); transition:all .15s; }
+.tb.active { background:white; color:var(--phase-dark); box-shadow:0 1px 3px rgba(0,0,0,.1); }
+
+/* ── PAGE LAYOUT ── */
+.page { max-width:1080px; margin:24px auto; padding:0 20px 40px; }
+.slide { display:none; }
+.slide.active { display:block; }
+
+/* ── STUDENT CARD ── */
+.sc { background:white; border-radius:14px; box-shadow:0 2px 20px rgba(0,0,0,.08),0 0 0 1px rgba(0,0,0,.04); overflow:hidden; height:560px; display:none; flex-direction:column; }
+body.vs .sc { display:flex; }
+.sh { flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; padding:13px 24px; border-bottom:1px solid #f0f7f1; }
+.shl { display:flex; align-items:center; gap:9px; }
+.type-badge { font-family:'Nunito',sans-serif; font-weight:800; font-size:10px; letter-spacing:.1em; padding:4px 10px; border-radius:4px; text-transform:uppercase; }
+.badge-r { color:#3d6b43; background:var(--phase-light); border:1px solid var(--phase-mid); }
+.badge-f { color:var(--phase-dark); background:var(--phase-light); border:1px solid var(--phase-mid); }
+.timer { font-family:'Nunito',sans-serif; font-weight:800; font-size:13.5px; color:var(--text-mid); }
+
+/* band variants */
+.bv { display:none; flex-direction:column; flex:1; min-height:0; }
+body.bk2  .bv[data-b="k2"]  { display:flex; }
+body.b35   .bv[data-b="35"] { display:flex; }
+body.b68   .bv[data-b="68"] { display:flex; }
+body.b912  .bv[data-b="912"]{ display:flex; }
+body.b612  .bv[data-b="612"]{ display:flex; }
+
+.sb { flex:1; min-height:0; display:flex; flex-direction:column; padding:18px 24px 10px; }
+.s-title { font-family:'Nunito',sans-serif; font-weight:900; font-size:40px; color:var(--text); line-height:1.1; margin-bottom:5px; flex-shrink:0; }
+.s-sub { font-size:19px; font-weight:600; color:var(--text-mid); margin-bottom:16px; flex-shrink:0; }
+
+/* cards row */
+.cr { flex:1; min-height:0; display:flex; align-items:stretch; }
+.cw { flex:1; display:flex; }
+.pc { flex:1; border-radius:10px; padding:12px 10px 10px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; overflow:hidden; }
+.pd { border:2px dashed var(--phase); }
+.pr { border:2px dashed #86efac; background:#f8fff9; }
+.card-arrow { flex:0 0 20px; display:flex; align-items:center; justify-content:center; color:var(--phase); font-size:16px; font-weight:900; flex-shrink:0; }
+.cm { display:flex; align-items:center; justify-content:space-between; width:100%; }
+.mode-pill { font-family:'Nunito',sans-serif; font-weight:800; font-size:12px; letter-spacing:.05em; padding:2px 6px; border-radius:20px; white-space:nowrap; }
+.m-ind  { background:var(--m-ind-bg);  border:1px solid var(--m-ind-b);  color:var(--m-ind-t); }
+.m-pair { background:var(--m-pair-bg); border:1px solid var(--m-pair-b); color:var(--m-pair-t); }
+.m-sm   { background:var(--m-sm-bg);   border:1px solid var(--m-sm-b);   color:var(--m-sm-t); }
+.m-wh   { background:var(--m-wh-bg);   border:1px solid var(--m-wh-b);   color:var(--m-wh-t); }
+.c-time { font-family:'Nunito',sans-serif; font-weight:700; font-size:10px; color:var(--text-soft); }
+.c-icon { font-size:34px; line-height:1; flex-shrink:0; }
+.c-label { font-family:'Nunito',sans-serif; font-weight:900; font-size:20px; color:var(--text); flex-shrink:0; }
+.c-prompt { font-size:17px; color:var(--text-mid); line-height:1.4; }
+.c-starter { font-size:15px; color:var(--text-soft); font-style:italic; line-height:1.35; }
+/* annotation key badge */
+.annot-key { display:flex; flex-wrap:wrap; gap:4px; justify-content:center; margin-top:2px; }
+.ak { font-family:'Nunito',sans-serif; font-weight:800; font-size:9.5px; background:#f0f7f1; border:1px solid var(--phase-mid); color:var(--phase-dark); border-radius:4px; padding:2px 6px; }
+
+/* ── TEACHER CARD ── */
+.tc2 { background:var(--t-bg); border-radius:14px; box-shadow:0 2px 20px rgba(0,0,0,.2); overflow:hidden; min-height:560px; display:none; flex-direction:column; }
+body.vt .tc2 { display:flex; }
+.t-hdr { flex:0 0 auto; background:var(--phase); padding:15px 24px; display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+.t-hdr-l { display:flex; flex-direction:column; gap:3px; }
+.t-ey { font-family:'Nunito',sans-serif; font-weight:700; font-size:10px; letter-spacing:.18em; color:rgba(255,255,255,.75); text-transform:uppercase; }
+.t-ttl { font-family:'Nunito',sans-serif; font-weight:900; font-size:21px; color:white; }
+.t-meta { display:flex; flex-direction:column; align-items:flex-end; gap:2px; background:rgba(0,0,0,.15); border-radius:7px; padding:7px 12px; flex-shrink:0; }
+.t-ml { font-family:'Nunito',sans-serif; font-weight:700; font-size:9px; letter-spacing:.12em; color:rgba(255,255,255,.6); text-transform:uppercase; }
+.t-mv { font-family:'Nunito',sans-serif; font-weight:800; font-size:12px; color:white; }
+.t-body { flex:1; padding:14px 24px 18px; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr auto auto; gap:12px; }
+.t-sec { background:var(--t-s); border-radius:9px; padding:12px 13px; overflow:hidden; }
+.t-sec-title { font-family:'Nunito',sans-serif; font-weight:900; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--phase-mid); margin-bottom:8px; }
+.h-row { display:flex; align-items:flex-start; gap:8px; padding:6px 0; border-bottom:1px solid var(--t-l); }
+.h-row:last-of-type { border-bottom:none; padding-bottom:0; }
+.h-badge { flex-shrink:0; background:rgba(10,122,20,.25); border:1px solid rgba(10,122,20,.4); border-radius:5px; padding:3px 6px; text-align:center; min-width:42px; }
+.h-d { font-family:'Nunito',sans-serif; font-weight:900; font-size:11.5px; color:#86efac; line-height:1; }
+.h-lbl { font-family:'Nunito',sans-serif; font-weight:700; font-size:7px; color:rgba(134,239,172,.7); letter-spacing:.05em; }
+.h-name { font-family:'Nunito',sans-serif; font-weight:800; font-size:12px; color:#86efac; margin-bottom:2px; }
+.h-rat { font-size:11px; color:var(--t-soft); line-height:1.35; }
+.g-row { display:flex; align-items:flex-start; gap:7px; padding:4px 0; border-bottom:1px solid var(--t-l); }
+.g-row:last-child { border-bottom:none; padding-bottom:0; }
+.g-band { font-family:'Nunito',sans-serif; font-weight:900; font-size:9px; letter-spacing:.08em; color:var(--phase-mid); background:rgba(10,122,20,.18); border-radius:3px; padding:2px 6px; white-space:nowrap; flex-shrink:0; margin-top:1px; }
+.g-note { font-size:11px; color:var(--t-soft); line-height:1.4; }
+.plan-note { background:rgba(255,255,255,.04); border:1px solid var(--t-l); border-radius:7px; padding:8px 11px; margin-top:8px; }
+.plan-title { font-family:'Nunito',sans-serif; font-weight:900; font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:3px; }
+.plan-txt { font-size:11px; color:var(--t-soft); line-height:1.4; }
+.why-box { grid-column:1/-1; border-left:3px solid var(--phase-mid); background:rgba(10,122,20,.1); border-radius:0 9px 9px 0; padding:10px 13px; }
+.why-l { font-family:'Nunito',sans-serif; font-weight:900; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--phase-mid); margin-bottom:3px; }
+.why-t { font-size:12.5px; color:var(--t-text); line-height:1.55; }
+.std-row { grid-column:1/-1; display:flex; align-items:flex-start; gap:8px; padding-top:9px; border-top:1px solid var(--t-l); }
+.std-l { font-family:'Nunito',sans-serif; font-weight:900; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--phase-mid); white-space:nowrap; padding-top:1px; }
+.std-v { font-size:11px; color:var(--t-soft); line-height:1.45; }
+
+@media print {
+  .topbar { display:none; }
+  .page { margin:0; padding:0; max-width:100%; }
+  .slide { display:block !important; page-break-after:always; }
+  .sc,.tc2 { display:flex !important; box-shadow:none; border-radius:0; }
+  body.vs .tc2, body.vt .sc { display:none !important; }
+}
+
+/* ── COVER SLIDE ── */
+.cover-slide {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:calc(100vh - 56px);
+  background:linear-gradient(145deg,#065f0c 0%,#0a7a14 50%,#16a34a 100%);
+  position:relative; overflow:hidden; text-align:center; padding:40px;
+}
+.cover-slide::before {
+  content:''; position:absolute; inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.cv-badge {
+  font-weight:900; font-size:11px; letter-spacing:3px;
+  background:rgba(255,255,255,.2); color:#fff; padding:6px 18px;
+  border-radius:20px; text-transform:uppercase; margin-bottom:28px;
+  border:1px solid rgba(255,255,255,.35); position:relative;
+}
+.cv-title {
+  font-family:'Nunito',sans-serif; font-weight:900; font-size:90px;
+  color:#fff; line-height:.9; letter-spacing:-2px; position:relative;
+}
+.cv-sub {
+  font-size:22px; font-weight:700; color:rgba(255,255,255,.85);
+  margin-top:18px; letter-spacing:.5px; position:relative;
+}
+.cv-logo {
+  position:absolute; bottom:32px; right:36px;
+  display:flex; align-items:center; gap:10px;
+}
+.cv-logo-text {
+  font-size:10px; font-weight:700; color:rgba(255,255,255,.6);
+  letter-spacing:1.5px; text-transform:uppercase; text-align:right; line-height:1.4;
+}
+.cv-logo img { width:56px; height:56px; border-radius:50%; object-fit:cover; }
+
+/* ── Individual protocol page overrides ── */
+.slide { display:block; }
+.back-btn {
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:'Nunito',sans-serif; font-weight:700; font-size:12px;
+  color:var(--text-soft); text-decoration:none; padding:5px 10px 5px 6px;
+  border-radius:6px; border:1.5px solid var(--border); background:white;
+  transition:all .15s;
+}
+.back-btn:hover { border-color:var(--phase); color:var(--phase); }
+</style>
+</head>
+<body class="vs bk2">
+
+<div class="topbar">
+  <div class="tl">
+    <a class="back-btn" href="../examine.html">&#8592; Examine</a>
+    <span class="phase-pill">EXAMINE</span>
+    <span class="deck-label">Collaborative Text Analysis</span>
+  </div>
+  <div class="ctrl-area">
+    <div class="tg">
+      <button class="tb active" id="bvs" onclick="setView('s')">Student</button>
+      <button class="tb"        id="bvt" onclick="setView('t')">Teacher</button>
+    </div>
+    <div class="tg">
+      <button class="tb active" id="bbk2"  onclick="setBand('k2')">K–2</button>
+      <button class="tb"        id="bb35"  onclick="setBand('35')">3–5</button>
+      <button class="tb"        id="bb68"  onclick="setBand('68')">6–8</button>
+      <button class="tb"        id="bb912" onclick="setBand('912')">9–12</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div id="slide0"></div>
+</div>
+
+<script>
+
+const MC = { individual:'m-ind', pair:'m-pair', small:'m-sm', whole:'m-wh' };
+const ML = { individual:'\u270F\uFE0F\u202FIndividual', pair:'\uD83D\uDC65\u202FPartner', small:'\u25CE\u202FSmall Group', whole:'\u25CE\u202FWhole Class' };
+
+const P = [
+{
+  id:'cta', type:'routine', name:'Collaborative Text Analysis', bands4:true,
+  timer:{ k2:'25\u201330 min', '35':'30\u201335 min', '68':'30\u201335 min', '912':'30\u201335 min' },
+  purpose:{
+    k2:'Listen, notice, talk, and connect. What does this text help us understand?',
+    '35':'Read, annotate, and discuss. What is this text saying — and what does it mean for our challenge?',
+    '68':'Read, analyze, and evaluate. What is the argument, and how strong is the evidence?',
+    '912':'Read, analyze, and debate. What does this text add, complicate, or contradict?'
+  },
+  bands:{
+    k2:[
+      { mode:'whole',      time:'5\u20137 min', icon:'\uD83D\uDCD6', label:'Read Together',
+        prompt:'Teacher reads aloud. Listen and follow along. What\u2019s this mostly about?',
+        starter:'' },
+      { mode:'individual', time:'5\u20137 min', icon:'\u2B50', label:'Notice',
+        prompt:'Circle one word that feels important. Draw what you pictured.',
+        starter:'I noticed\u2026 / This is mostly about\u2026' },
+      { mode:'pair',       time:'5\u20137 min', icon:'\uD83D\uDC65', label:'Talk It Over',
+        prompt:'What is this mostly about? Build on your partner\u2019s ideas.',
+        starter:'' },
+      { mode:'whole',      time:'5 min',        icon:'\uD83D\uDD17', label:'Connect',
+        prompt:'How does this connect to our challenge question?',
+        starter:'' }
+    ],
+    '35':[
+      { mode:'individual', time:'5\u20137 min',  icon:'\uD83D\uDCD6', label:'First Read',
+        prompt:'Read for gist. What is this text mostly about?',
+        starter:'' },
+      { mode:'individual', time:'8\u201310 min', icon:'\u270F\uFE0F', label:'Annotate',
+        prompt:'Second read. Mark as you go.',
+        annot:['\u2B50 key idea','E evidence','\u2753 question'],
+        starter:'' },
+      { mode:'small',      time:'7\u20138 min',  icon:'\u25CE', label:'Discuss',
+        prompt:'What is the central idea? What evidence supports it? How strong is that evidence?',
+        starter:'' },
+      { mode:'individual', time:'5\u20138 min',  icon:'\uD83D\uDD17', label:'Apply',
+        prompt:'What does this tell us about the challenge? Connect it to your inquiry question.',
+        starter:'This text shows\u2026 / This connects to my question because\u2026' }
+    ],
+    '68':[
+      { mode:'individual', time:'5\u20137 min',  icon:'\uD83D\uDCD6', label:'First Read & Annotate',
+        prompt:'Read and mark as you go.',
+        annot:['\u2B50 central idea','E evidence','\u2753 question','\u2B55 vocab'],
+        starter:'' },
+      { mode:'individual', time:'8\u201310 min', icon:'\uD83D\uDD0D', label:'Analyze',
+        prompt:'What is the author\u2019s argument? What is their purpose? What evidence is strongest?',
+        starter:'' },
+      { mode:'small',      time:'8\u201310 min', icon:'\u25CE', label:'Evaluate',
+        prompt:'How credible and relevant is the evidence? What perspective might the author be missing?',
+        starter:'' },
+      { mode:'individual', time:'5\u20138 min',  icon:'\uD83D\uDD17', label:'Apply',
+        prompt:'Write a claim connecting this text to your root cause or solution reasoning. Cite evidence.',
+        starter:'' }
+    ],
+    '912':[
+      { mode:'individual', time:'5\u20137 min',  icon:'\uD83D\uDCD6', label:'First Read & Annotate',
+        prompt:'Read and mark: central claim, key evidence, assumptions, gaps.',
+        annot:['\u2B50 claim','E evidence','A assumption','? gap'],
+        starter:'' },
+      { mode:'individual', time:'8\u201310 min', icon:'\uD83D\uDD0D', label:'Deep Analysis',
+        prompt:'What is the argument? What evidence is strongest or weakest? What is absent from this text?',
+        starter:'' },
+      { mode:'small',      time:'8\u201310 min', icon:'\u25CE', label:'Evaluate & Debate',
+        prompt:'How does this compare to other sources? What does it add, complicate, or contradict?',
+        starter:'' },
+      { mode:'individual', time:'5\u20138 min',  icon:'\uD83D\uDD17', label:'Apply',
+        prompt:'Write a precise claim with evidence. Address at least one counterargument.',
+        starter:'' }
+    ]
+  },
+  teacher:{
+    when:'Daily, as the primary investigation activity', type:'Daily Routine',
+    hattie:[
+      { d:'0.82', n:'Classroom Discussion',     r:'The Discuss/Evaluate step — when structured around evidence and argument — significantly accelerates reasoning and comprehension.' },
+      { d:'0.75', n:'Elaboration',              r:'The Apply step requires students to connect text to their inquiry question, deepening encoding and transfer.' },
+      { d:'0.60', n:'Metacognitive Strategies', r:'Annotation externalizes thinking during reading, helping students track understanding and identify gaps.' }
+    ],
+    grade:{
+      k2:  'Use short, accessible texts with images. The Read Together step should be slow and interactive. Accept drawing for the Notice step.',
+      '35':'Model annotation explicitly before students try independently. The Annotate step is the highest-leverage step for building disciplinary reading habits.',
+      '68':'The Evaluate step is where the deepest thinking happens. Push: \u201cHow do you know the evidence is credible? What would a skeptic say?\u201d',
+      '912':'The Apply step should produce writing that feeds directly into the end-of-Examine Defend Your Thinking protocol. Treat it as a running argument draft.'
+    },
+    planning:'Read → Think → Write → Discuss is the underlying cognitive sequence. The four phases of CTA follow this arc: First Read (Read) → Annotate/Analyze (Think) → Discuss/Evaluate (Discuss) → Apply (Write). This sequence ensures students process internally before speaking publicly, which reduces status dynamics and increases participation equity.',
+    why:'CTA is the daily engine of Examine. Every session, it moves students from text to thinking to discussion to application — building the disciplinary understanding, evidence use, and solution reasoning that the Examine continuum assesses. The quality of Apply writing across sessions is your best window into how students\u2019 thinking is developing.',
+    std:'CCSS RI.1, RI.2, RI.6, RI.8, RI.9 \u00b7 CCSS W.1, W.9 \u00b7 CCSS SL.1'
+  }
+}
+];
+
+function buildCard(step, isRoutine) {
+  const dc = isRoutine ? 'pr' : 'pd';
+  const mc = MC[step.mode] || 'm-wh';
+  const ml = ML[step.mode] || step.mode;
+  const starter = step.starter ? `<div class="c-starter">${step.starter}</div>` : '';
+  const annotKey = step.annot ? `<div class="annot-key">${step.annot.map(a=>`<span class="ak">${a}</span>`).join('')}</div>` : '';
+  return `<div class="cw"><div class="pc ${dc}">
+    <div class="cm"><span class="mode-pill ${mc}">${ml}</span><span class="c-time">\u23F3\u202F${step.time}</span></div>
+    <div class="c-icon">${step.icon}</div>
+    <div class="c-label">${step.label}</div>
+    <div class="c-prompt">${step.prompt}</div>
+    ${annotKey}${starter}
+  </div></div>`;
+}
+
+function buildBand(proto, band) {
+  const ir = proto.type === 'routine';
+  let cards = '';
+  proto.bands[band].forEach((s, i) => {
+    cards += buildCard(s, ir);
+    if (i < proto.bands[band].length - 1) cards += `<div class="card-arrow">\u203A</div>`;
+  });
+  return `<div class="bv" data-b="${band}">
+    <div class="sb">
+      <div class="s-title">${proto.name}</div>
+      <div class="s-sub">${proto.purpose[band]}</div>
+      <div class="cr">${cards}</div>
+    </div>
+  </div>`;
+}
+
+function buildTeacher(proto) {
+  const t = proto.teacher;
+  const hrows = t.hattie.map(h=>`<div class="h-row">
+    <div class="h-badge"><div class="h-d">d=${h.d}</div><div class="h-lbl">Hattie</div></div>
+    <div><div class="h-name">${h.n}</div><div class="h-rat">${h.r}</div></div>
+  </div>`).join('');
+  const gKeys = [
+    {k:'k2',l:'K\u20132'},{k:'35',l:'3\u20135'},
+    {k:'68',l:'6\u20138'},{k:'912',l:'9\u201312'}
+  ];
+  const grows = gKeys.map(g=>`<div class="g-row">
+    <span class="g-band">${g.l}</span>
+    <span class="g-note">${t.grade[g.k]}</span>
+  </div>`).join('');
+  const planNote = t.planning ? `<div class="plan-note">
+    <div class="plan-title">Planning Notes</div>
+    <div class="plan-txt">${t.planning}</div>
+  </div>` : '';
+  return `<div class="tc2">
+    <div class="t-hdr">
+      <div class="t-hdr-l">
+        <div class="t-ey">Teacher Background \u2014 Examine</div>
+        <div class="t-ttl">${proto.name}</div>
+      </div>
+      <div class="t-meta">
+        <div class="t-ml">When to use</div><div class="t-mv">${t.when}</div>
+        <div class="t-ml" style="margin-top:4px">Type</div><div class="t-mv">${t.type}</div>
+      </div>
+    </div>
+    <div class="t-body">
+      <div class="t-sec"><div class="t-sec-title">Hattie Effect Sizes</div>${hrows}</div>
+      <div class="t-sec"><div class="t-sec-title">Grade Band Guidance</div>${grows}${planNote}</div>
+      <div class="why-box"><div class="why-l">Why this, why now</div><div class="why-t">${t.why}</div></div>
+      <div class="std-row"><div class="std-l">Standards</div><div class="std-v">${t.std}</div></div>
+    </div>
+  </div>`;
+}
+
+function buildAll() {
+  const ir = P[0].type === 'routine';
+  const bc = ir ? 'badge-r' : 'badge-f';
+  const bl = ir ? 'Daily Routine' : 'Focus Protocol';
+  const allBands = ["k2","35","68","912"];
+  const bvs = allBands.map(b => buildBand(P[0], b)).join('');
+  document.getElementById('slide0').innerHTML = `
+    <div class="sc">
+      <div class="sh">
+        <div class="shl">
+          <span class="phase-pill">EXAMINE</span>
+          <span class="type-badge ${bc}">${bl}</span>
+        </div>
+        <div class="timer" id="tmr0">\u23F1\u202F${P[0].timer['k2']}</div>
+      </div>
+      ${bvs}
+    </div>
+    ${buildTeacher(P[0])}`;
+}
+
+buildAll();
+
+function setView(v) {
+  document.body.classList.toggle('vs', v === 's');
+  document.body.classList.toggle('vt', v === 't');
+  document.getElementById('bvs').classList.toggle('active', v === 's');
+  document.getElementById('bvt').classList.toggle('active', v === 't');
+}
+
+function setBand(b) {
+  document.body.className = document.body.className.replace(/\bb(k2|35|612|68|912)\b/g,'').trim() + ' b' + b;
+  ['k2','35','68','912'].forEach(x => {
+    const btn = document.getElementById('bb'+x);
+    if(btn) btn.classList.toggle('active', x === b);
+  });
+  const el = document.getElementById('tmr0');
+  if(el) el.textContent = '\u23F1\u202F' + (P[0].timer[b] || P[0].timer['35'] || P[0].timer['k2']);
+}
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowLeft'||e.key==='ArrowRight') return;
+});
+
+</script>
+</body>
+</html>

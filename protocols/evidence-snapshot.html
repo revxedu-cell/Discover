@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Evidence Snapshot — DEEDS DO Protocol</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --phase:#b87800; --phase-light:#fffbf0; --phase-mid:#d48b00; --phase-dark:#8a5900;
+  --amber:#d48b00; --amber-light:#fff8e0;
+  --text:#1C1917; --text-mid:#44403C; --text-soft:#78716C;
+  --border:#E7E5E4; --bg:#F5F4F2; --white:#fff;
+  --m-ind-bg:#EFF6FF; --m-ind-b:#BFDBFE; --m-ind-t:#1D4ED8;
+  --m-pair-bg:#F0FDF4; --m-pair-b:#BBF7D0; --m-pair-t:#15803D;
+  --m-sm-bg:#FAF5FF; --m-sm-b:#DDD6FE; --m-sm-t:#6D28D9;
+  --m-wh-bg:#FFF7ED; --m-wh-b:#FED7AA; --m-wh-t:#C2410C;
+  --t-bg:#3d2800; --t-s:rgba(255,255,255,.06); --t-l:rgba(255,255,255,.09);
+  --t-text:rgba(255,255,255,.88); --t-soft:rgba(255,255,255,.55);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+
+/* ── TOPBAR ── */
+.topbar{position:sticky;top:0;z-index:50;background:white;border-bottom:1px solid var(--border);
+  padding:9px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.tl{display:flex;align-items:center;gap:9px;}
+.back-btn{display:inline-flex;align-items:center;gap:5px;font-family:'Nunito',sans-serif;font-weight:700;
+  font-size:12px;color:var(--text-soft);text-decoration:none;padding:5px 10px 5px 6px;
+  border-radius:6px;border:1.5px solid var(--border);background:white;transition:all .15s;}
+.back-btn:hover{border-color:var(--phase);color:var(--phase);}
+.phase-pill{font-family:'Nunito',sans-serif;font-weight:900;font-size:11px;letter-spacing:.15em;
+  color:white;background:var(--phase);padding:4px 11px;border-radius:5px;}
+.deck-label{font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:var(--text-mid);}
+.ctrl-area{display:flex;align-items:center;gap:8px;}
+.tg{display:flex;background:var(--bg);border-radius:7px;padding:3px;gap:2px;}
+.tb{font-family:'Nunito',sans-serif;font-weight:700;font-size:11px;padding:4px 10px;
+  border:none;border-radius:5px;cursor:pointer;background:transparent;color:var(--text-soft);transition:all .15s;}
+.tb.active{background:white;color:var(--phase-dark);box-shadow:0 1px 3px rgba(0,0,0,.1);}
+
+/* ── LAYOUT ── */
+.page{max-width:1400px;margin:24px auto;padding:0 20px 40px;}
+
+/* ── STUDENT CARD ── */
+.sc{background:white;border-radius:14px;box-shadow:0 2px 20px rgba(0,0,0,.08),0 0 0 1px rgba(0,0,0,.04);
+  overflow:hidden;aspect-ratio:16/9;min-height:480px;display:none;flex-direction:column;}
+body.vs .sc{display:flex;}
+
+.sh{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
+  padding:13px 24px;border-bottom:1px solid #F5F5F4;}
+.shl{display:flex;align-items:center;gap:9px;}
+.type-badge{font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;
+  letter-spacing:.1em;padding:5px 12px;border-radius:4px;text-transform:uppercase;}
+.badge-r{color:#92400E;background:var(--amber-light);border:1px solid #FDE68A;}
+.badge-f{color:var(--phase-dark);background:var(--phase-light);border:1px solid var(--phase-mid);}
+.timer{font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;color:var(--text-mid);}
+
+.sb{flex:1;min-height:0;display:flex;flex-direction:column;padding:18px 24px 10px;}
+.s-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:40px;
+  color:var(--text);line-height:1.1;margin-bottom:6px;flex-shrink:0;}
+.s-sub{font-size:19px;font-weight:600;color:var(--text-mid);margin-bottom:16px;flex-shrink:0;}
+
+.cr{flex:1;min-height:0;display:flex;align-items:stretch;}
+.cw{flex:1;display:flex;}
+.pc{flex:1;border-radius:10px;padding:14px 12px 12px;display:flex;flex-direction:column;
+  align-items:center;text-align:center;gap:7px;overflow:hidden;}
+.pd{border:2px dashed var(--phase);}
+.pr{border:2px dashed #FDBA74;background:#FFFCF9;}
+.card-arrow{flex:0 0 20px;display:flex;align-items:center;justify-content:center;
+  color:var(--phase);font-size:16px;font-weight:900;flex-shrink:0;}
+.cm{display:flex;align-items:center;justify-content:space-between;width:100%;}
+.mode-pill{font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;
+  letter-spacing:.05em;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.m-ind{background:var(--m-ind-bg);border:1px solid var(--m-ind-b);color:var(--m-ind-t);}
+.m-pair{background:var(--m-pair-bg);border:1px solid var(--m-pair-b);color:var(--m-pair-t);}
+.m-sm{background:var(--m-sm-bg);border:1px solid var(--m-sm-b);color:var(--m-sm-t);}
+.m-wh{background:var(--m-wh-bg);border:1px solid var(--m-wh-b);color:var(--m-wh-t);}
+.c-time{font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:var(--text-soft);}
+.c-icon{font-size:34px;line-height:1;flex-shrink:0;}
+.c-label{font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;color:var(--text);flex-shrink:0;}
+.c-prompt{font-size:17px;color:var(--text-mid);line-height:1.4;}
+.c-starter{font-size:15px;color:var(--text-soft);font-style:italic;line-height:1.35;}
+
+/* ── TEACHER CARD ── */
+.tc2{background:var(--t-bg);border-radius:14px;box-shadow:0 2px 20px rgba(0,0,0,.2);
+  overflow:hidden;aspect-ratio:16/9;min-height:500px;display:none;flex-direction:column;}
+body.vt .tc2{display:flex;}
+
+.t-hdr{flex:0 0 auto;background:var(--phase);padding:15px 24px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+.t-hdr-l{display:flex;flex-direction:column;gap:3px;}
+.t-ey{font-family:'Nunito',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:.18em;color:rgba(255,255,255,.75);text-transform:uppercase;}
+.t-ttl{font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;color:white;}
+.t-meta{display:flex;flex-direction:column;align-items:flex-end;gap:2px;
+  background:rgba(0,0,0,.15);border-radius:7px;padding:7px 12px;flex-shrink:0;}
+.t-ml{font-family:'Nunito',sans-serif;font-weight:700;font-size:10px;letter-spacing:.12em;
+  color:rgba(255,255,255,.6);text-transform:uppercase;}
+.t-mv{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:white;}
+
+.t-body{flex:1;min-height:0;padding:14px 24px 18px;display:grid;
+  grid-template-columns:1fr 1fr;grid-template-rows:1fr auto auto;gap:12px;}
+.t-sec{background:var(--t-s);border-radius:9px;padding:12px 13px;overflow:hidden;}
+.t-sec-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--phase);margin-bottom:8px;}
+
+/* standards rows (adapted from hattie) */
+.h-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--t-l);}
+.h-row:last-of-type{border-bottom:none;padding-bottom:0;}
+.h-badge{flex-shrink:0;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  border-radius:5px;padding:3px 6px;text-align:center;min-width:52px;}
+.h-d{font-family:'Nunito',sans-serif;font-weight:900;font-size:11px;color:#c8e6ff;line-height:1.2;}
+.h-lbl{font-family:'Nunito',sans-serif;font-weight:700;font-size:7px;color:rgba(255,255,255,.5);letter-spacing:.05em;}
+.h-name{font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:rgba(255,255,255,.85);margin-bottom:2px;}
+.h-rat{font-size:12px;color:var(--t-soft);line-height:1.35;}
+
+/* SOLD rows */
+.sold-row-t{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--t-l);}
+.sold-row-t:last-of-type{border-bottom:none;padding-bottom:0;}
+.sold-letter-t{flex-shrink:0;width:22px;height:22px;border-radius:50%;
+  background:var(--phase);display:flex;align-items:center;justify-content:center;
+  font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;color:white;margin-top:1px;}
+.sold-txt{font-size:12px;color:var(--t-soft);line-height:1.4;}
+
+/* facilitation notes */
+.fac-list{list-style:none;display:flex;flex-direction:column;gap:5px;overflow:auto;}
+.fac-list li{font-size:12px;color:var(--t-soft);line-height:1.4;padding-left:12px;position:relative;}
+.fac-list li::before{content:'›';position:absolute;left:0;color:var(--phase);font-weight:900;}
+
+/* why-now + standards */
+.why-box{grid-column:1/-1;border-left:3px solid var(--phase);background:rgba(255,255,255,.05);
+  border-radius:0 9px 9px 0;padding:10px 13px;}
+.why-l{font-family:'Nunito',sans-serif;font-weight:900;font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--phase);margin-bottom:3px;}
+.why-t{font-size:13px;color:var(--t-text);line-height:1.55;}
+.std-row-t{grid-column:1/-1;display:flex;align-items:flex-start;gap:8px;
+  padding-top:9px;border-top:1px solid var(--t-l);}
+.std-l{font-family:'Nunito',sans-serif;font-weight:900;font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--phase);white-space:nowrap;padding-top:1px;}
+.std-v{font-size:12px;color:var(--t-soft);line-height:1.45;}
+
+@media print{
+  .topbar{display:none;}
+  .page{margin:0;padding:0;max-width:100%;}
+  .sc,.tc2{display:flex !important;box-shadow:none;border-radius:0;}
+}
+
+</style>
+</head>
+<body class="vs">
+<div class="topbar">
+  <div class="tl">
+    <a class="back-btn" href="../do.html">&#8592; Do</a>
+    <span class="phase-pill">DO</span>
+    <span class="deck-label">Evidence Snapshot</span>
+  </div>
+  <div class="ctrl-area">
+    <div class="tg">
+      <button class="tb active" id="bvs" onclick="setView('s')">Student</button>
+      <button class="tb"        id="bvt" onclick="setView('t')">Teacher</button>
+    </div>
+  </div>
+</div>
+<div class="page">
+  <div class="sc">
+    <div class="sh">
+      <div class="shl">
+        <span class="phase-pill">DO</span>
+        <span class="type-badge badge-r">Daily Routine</span>
+      </div>
+      <div class="timer">⏱ 3–5 min</div>
+    </div>
+    <div class="sb"><div class="s-title">Evidence Snapshot</div><div class="s-sub">A brief, powerful closing check-in during the implementation period to surface what matters most from today's data.</div><div class="cr"><div class="cw"><div class="pc pr"><div class="cm"><span class="mode-pill m-ind">✏️ Individual</span><span class="c-time">⏳ 1–2 min</span></div><div class="c-icon">⭐</div><div class="c-label">Most Important Evidence</div><div class="c-prompt">Look back at what you observed or collected today. What single piece of evidence stands out?</div><div class="c-starter">One piece of evidence that matters most is…<br>This is important because it shows…<br>I noticed this when…</div></div></div><div class="card-arrow">›</div><div class="cw"><div class="pc pr"><div class="cm"><span class="mode-pill m-ind">✏️ Individual</span><span class="c-time">⏳ 1–2 min</span></div><div class="c-icon">😮</div><div class="c-label">What Surprised You</div><div class="c-prompt">Name something that happened differently from what you expected during implementation.</div><div class="c-starter">One result that surprised me was…<br>I didn't expect…<br>This is worth paying attention to because…</div></div></div><div class="card-arrow">›</div><div class="cw"><div class="pc pr"><div class="cm"><span class="mode-pill m-ind">✏️ Individual</span><span class="c-time">⏳ 1 min</span></div><div class="c-icon">➡️</div><div class="c-label">Consider Next Steps</div><div class="c-prompt">Based on what you saw today, what should you do differently or pay closer attention to next time?</div><div class="c-starter">Next time, I want to pay closer attention to…<br>Based on today, we should adjust…<br>A question I want to answer in our next session is…</div></div></div></div></div>
+  </div>
+  <div class="tc2">
+    <div class="t-hdr">
+      <div class="t-hdr-l">
+        <div class="t-ey">Teacher Background — Do</div>
+        <div class="t-ttl">Evidence Snapshot</div>
+      </div>
+      <div class="t-meta">
+        <div class="t-ml">When to use</div><div class="t-mv">End of each implementation session</div>
+      </div>
+    </div>
+    <div class="t-body"><div class="t-sec"><div class="t-sec-title">Standards Alignment</div><div class="h-row"><div class="h-badge"><div class="h-d">NGSS SEP 3</div></div><div><div class="h-rat">Planning and carrying out investigations — daily observation during implementation is an authentic scientific practice; Evidence Snapshot builds that habit.</div></div></div><div class="h-row"><div class="h-badge"><div class="h-d">CCSS SL.1</div></div><div><div class="h-rat">Collaborative discussion — the Turn &amp; Talk format requires students to articulate evidence and share observations with precision in dialogue.</div></div></div><div class="h-row"><div class="h-badge"><div class="h-d">C3 D3.3</div></div><div><div class="h-rat">Gathering and evaluating sources — students prioritize and evaluate the significance of individual pieces of evidence relative to their question.</div></div></div><div class="h-row"><div class="h-badge"><div class="h-d">Math SMP.6</div></div><div><div class="h-rat">Attend to precision — naming evidence precisely (what, where, when observed) builds mathematical and scientific precision habits.</div></div></div></div><div class="t-sec"><div class="t-sec-title">Facilitation Notes</div><ul class="fac-list"><li>Keep it genuinely quick — 3 minutes is enough if students know the prompts. Post them visibly in the room during the Do phase so no time is lost re-reading them each day.</li><li>Call on 2–3 pairs to share their "surprise" each day. This builds a class-wide observation log that can be referenced during the full Data Dive.</li><li>If students consistently have "no surprises," probe further: "What went exactly as expected? How do you know your prediction was right?"</li><li>For extended implementation periods (multi-week projects), brief weekly Data Dives can be anchored by accumulating Evidence Snapshot notes from the daily routine.</li><li>The Next Steps prompt directly feeds session planning. Consider collecting these briefly and using them to shape the next session's structure or focus.</li></ul></div><div class="why-box"><div class="why-l">Why this, why now</div><div class="why-t">Ownership: Students select their own "most important evidence" — this requires judgment, not recall. It treats scholars as active evaluators of their own data, not passive recorders.</div></div>
+      <div class="std-row-t"><div class="std-l">Standards</div><div class="std-v">NGSS SEP 3 · CCSS SL.1 · C3 D3.3 · Math SMP.6</div></div>
+    </div>
+  </div>
+</div>
+<script>
+function setView(v){
+  document.body.classList.toggle('vs',v==='s');
+  document.body.classList.toggle('vt',v==='t');
+  document.getElementById('bvs').classList.toggle('active',v==='s');
+  document.getElementById('bvt').classList.toggle('active',v==='t');
+}
+</script>
+</body>
+</html>
