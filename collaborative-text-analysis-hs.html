@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Collaborative Text Analysis — DEEDS Examine (9–12)</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --phase:#0a7a14; --phase-light:#e8f7ea; --phase-mid:#bbf7d0; --phase-dark:#065f0c;
+  --text:#072b0a; --text-mid:#3d6b43; --text-soft:#6b9b72;
+  --border:#d4ead6; --bg:#f0faf1; --white:#fff;
+  --m-ind-bg:#EFF6FF; --m-ind-b:#BFDBFE; --m-ind-t:#1D4ED8;
+  --m-pair-bg:#F0FDF4; --m-pair-b:#BBF7D0; --m-pair-t:#15803D;
+  --m-sm-bg:#FAF5FF;  --m-sm-b:#DDD6FE;  --m-sm-t:#6D28D9;
+  --m-wh-bg:#FFF7ED;  --m-wh-b:#FED7AA;  --m-wh-t:#C2410C;
+  --m-voc-bg:#FEF9C3; --m-voc-b:#FDE047; --m-voc-t:#854D0E;
+  --t-bg:#072b0a; --t-s:rgba(255,255,255,.06); --t-l:rgba(255,255,255,.09);
+  --t-text:rgba(255,255,255,.88); --t-soft:rgba(255,255,255,.55);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Nunito Sans',sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+
+/* ── TOPBAR ── */
+.topbar {
+  position:sticky; top:0; z-index:50; background:white;
+  border-bottom:1px solid var(--border);
+  padding:9px 20px; display:flex; align-items:center;
+  justify-content:space-between; gap:10px; flex-wrap:wrap;
+}
+.tl { display:flex; align-items:center; gap:9px; }
+.back-btn {
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:'Nunito',sans-serif; font-weight:700; font-size:12px;
+  color:var(--text-soft); text-decoration:none; padding:5px 10px 5px 6px;
+  border-radius:6px; border:1.5px solid var(--border); background:white; transition:all .15s;
+}
+.back-btn:hover { border-color:var(--phase); color:var(--phase); }
+.phase-pill { font-family:'Nunito',sans-serif; font-weight:900; font-size:11px; letter-spacing:.15em; color:white; background:var(--phase); padding:4px 11px; border-radius:5px; }
+.grade-pill { font-family:'Nunito',sans-serif; font-weight:900; font-size:11px; letter-spacing:.08em; color:var(--phase-dark); background:var(--phase-light); border:1.5px solid var(--phase-mid); padding:4px 10px; border-radius:5px; }
+.deck-label { font-family:'Nunito',sans-serif; font-weight:700; font-size:13px; color:var(--text-mid); }
+.ctrl-area { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.tg { display:flex; background:var(--bg); border-radius:7px; padding:3px; gap:2px; }
+.tb { font-family:'Nunito',sans-serif; font-weight:700; font-size:11px; padding:4px 10px; border:none; border-radius:5px; cursor:pointer; background:transparent; color:var(--text-soft); transition:all .15s; }
+.tb.active { background:white; color:var(--phase-dark); box-shadow:0 1px 3px rgba(0,0,0,.1); }
+.subj-tg { display:flex; background:var(--bg); border-radius:7px; padding:3px; gap:2px; }
+.subj-tb { font-family:'Nunito',sans-serif; font-weight:800; font-size:11px; padding:5px 11px; border:none; border-radius:5px; cursor:pointer; background:transparent; color:var(--text-soft); transition:all .15s; white-space:nowrap; }
+.subj-tb.active { background:var(--phase); color:white; box-shadow:0 1px 4px rgba(10,122,20,.35); }
+.phase-nav { display:flex; align-items:center; gap:6px; }
+.nav-btn { width:30px; height:30px; border-radius:6px; border:1.5px solid var(--border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text-mid); font-size:13px; transition:all .15s; }
+.nav-btn:hover:not(:disabled) { border-color:var(--phase); color:var(--phase); }
+.nav-btn:disabled { opacity:.3; cursor:not-allowed; }
+.slide-ctr { font-family:'Nunito',sans-serif; font-weight:800; font-size:12px; color:var(--text-mid); min-width:54px; text-align:center; white-space:nowrap; }
+
+/* ── PAGE LAYOUT ── */
+.page { max-width:1080px; margin:24px auto; padding:0 20px 40px; }
+.subj-panel { display:none; }
+body.subj-cr  .subj-panel.cr  { display:block; }
+body.subj-cta .subj-panel.cs  { display:block; }
+body.subj-css .subj-panel.css { display:block; }
+.hs-slide { display:none; }
+.hs-slide.active { display:block; }
+
+/* ── STUDENT CARD ── */
+.sc { background:white; border-radius:14px; box-shadow:0 2px 20px rgba(0,0,0,.08),0 0 0 1px rgba(0,0,0,.04); overflow:hidden; min-height:520px; display:none; flex-direction:column; }
+body.subj-cr.vs  #cr9-panel .sc,
+body.subj-cta.vs #cs9-panel .sc,
+body.subj-css.vs #css9-panel .sc { display:flex; }
+.sh { flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; padding:13px 24px; border-bottom:1px solid #f0f7f1; }
+.shl { display:flex; align-items:center; gap:9px; }
+.type-badge { font-family:'Nunito',sans-serif; font-weight:800; font-size:10px; letter-spacing:.1em; padding:4px 10px; border-radius:4px; text-transform:uppercase; }
+.badge-r { color:#3d6b43; background:var(--phase-light); border:1px solid var(--phase-mid); }
+.phase-num-badge { font-family:'Nunito',sans-serif; font-weight:900; font-size:10px; letter-spacing:.1em; padding:4px 11px; border-radius:4px; text-transform:uppercase; color:white; background:var(--phase-dark); }
+.timer { font-family:'Nunito',sans-serif; font-weight:800; font-size:13.5px; color:var(--text-mid); }
+.sb { flex:1; min-height:0; display:flex; flex-direction:column; padding:18px 24px 14px; }
+.s-phase-label { font-family:'Nunito',sans-serif; font-weight:900; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--phase); margin-bottom:4px; flex-shrink:0; }
+.s-title { font-family:'Nunito',sans-serif; font-weight:900; font-size:34px; color:var(--text); line-height:1.05; margin-bottom:5px; flex-shrink:0; }
+.s-sub { font-size:15px; font-weight:600; color:var(--text-mid); margin-bottom:14px; flex-shrink:0; }
+
+/* cards row */
+.cr { flex:1; min-height:0; display:flex; align-items:stretch; }
+.cw { flex:1; display:flex; }
+.pc { flex:1; border-radius:10px; padding:12px 10px 10px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:5px; overflow:hidden; }
+.pd { border:2px dashed var(--phase); }
+.pr { border:2px dashed #86efac; background:#f8fff9; }
+.pv { border:2px dashed var(--m-voc-b); background:#FEFCE8; }
+.card-arrow { flex:0 0 16px; display:flex; align-items:center; justify-content:center; color:var(--phase); font-size:14px; font-weight:900; flex-shrink:0; }
+.cm { display:flex; align-items:center; justify-content:space-between; width:100%; }
+.mode-pill { font-family:'Nunito',sans-serif; font-weight:800; font-size:11px; letter-spacing:.05em; padding:2px 6px; border-radius:20px; white-space:nowrap; }
+.m-ind  { background:var(--m-ind-bg);  border:1px solid var(--m-ind-b);  color:var(--m-ind-t); }
+.m-pair { background:var(--m-pair-bg); border:1px solid var(--m-pair-b); color:var(--m-pair-t); }
+.m-sm   { background:var(--m-sm-bg);   border:1px solid var(--m-sm-b);   color:var(--m-sm-t); }
+.m-wh   { background:var(--m-wh-bg);   border:1px solid var(--m-wh-b);   color:var(--m-wh-t); }
+.m-voc  { background:var(--m-voc-bg);  border:1px solid var(--m-voc-b);  color:var(--m-voc-t); }
+.c-time { font-family:'Nunito',sans-serif; font-weight:700; font-size:10px; color:var(--text-soft); }
+.c-icon { font-size:28px; line-height:1; flex-shrink:0; }
+.c-label { font-family:'Nunito',sans-serif; font-weight:900; font-size:16px; color:var(--text); flex-shrink:0; }
+.c-prompt { font-size:13px; color:var(--text-mid); line-height:1.4; }
+.c-starter { font-size:12px; color:var(--text-soft); font-style:italic; line-height:1.35; }
+.annot-key { display:flex; flex-wrap:wrap; gap:3px; justify-content:center; margin-top:2px; }
+.ak { font-family:'Nunito',sans-serif; font-weight:800; font-size:9px; background:#f0f7f1; border:1px solid var(--phase-mid); color:var(--phase-dark); border-radius:4px; padding:2px 5px; }
+
+/* CER badge */
+.cer-row { display:flex; gap:6px; justify-content:center; margin-top:3px; }
+.cer-badge { font-family:'Nunito',sans-serif; font-weight:900; font-size:10px; padding:3px 8px; border-radius:4px; }
+.cer-c { background:#EFF6FF; border:1px solid #BFDBFE; color:#1D4ED8; }
+.cer-e { background:#F0FDF4; border:1px solid #BBF7D0; color:#15803D; }
+.cer-r { background:#FAF5FF; border:1px solid #DDD6FE; color:#6D28D9; }
+
+/* phase dots */
+.phase-dots { display:flex; justify-content:center; gap:8px; padding:12px 0 0; }
+.phase-dot { width:28px; height:6px; border-radius:3px; background:var(--phase-mid); cursor:pointer; transition:all .2s; }
+.phase-dot.active { background:var(--phase); width:36px; }
+
+/* ── TEACHER CARD ── */
+.tc2 { background:var(--t-bg); border-radius:14px; box-shadow:0 2px 20px rgba(0,0,0,.2); overflow:hidden; min-height:500px; display:none; flex-direction:column; }
+body.subj-cr.vt  #cr9-panel .tc2,
+body.subj-cta.vt #cs9-panel .tc2,
+body.subj-css.vt #css9-panel .tc2 { display:flex; }
+.t-hdr { flex:0 0 auto; background:var(--phase); padding:15px 24px; display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+.t-hdr-l { display:flex; flex-direction:column; gap:3px; }
+.t-ey { font-family:'Nunito',sans-serif; font-weight:700; font-size:10px; letter-spacing:.18em; color:rgba(255,255,255,.75); text-transform:uppercase; }
+.t-ttl { font-family:'Nunito',sans-serif; font-weight:900; font-size:20px; color:white; }
+.t-meta { display:flex; flex-direction:column; align-items:flex-end; gap:2px; background:rgba(0,0,0,.15); border-radius:7px; padding:7px 12px; flex-shrink:0; }
+.t-ml { font-family:'Nunito',sans-serif; font-weight:700; font-size:9px; letter-spacing:.12em; color:rgba(255,255,255,.6); text-transform:uppercase; }
+.t-mv { font-family:'Nunito',sans-serif; font-weight:800; font-size:12px; color:white; }
+.t-body { flex:1; padding:14px 24px 18px; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr auto auto; gap:12px; }
+.t-sec { background:var(--t-s); border-radius:9px; padding:12px 13px; overflow:hidden; }
+.t-sec-title { font-family:'Nunito',sans-serif; font-weight:900; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--phase-mid); margin-bottom:8px; }
+.fac-list { list-style:none; display:flex; flex-direction:column; gap:4px; overflow:auto; }
+.fac-list li { font-size:11.5px; color:var(--t-soft); line-height:1.4; padding-left:12px; position:relative; }
+.fac-list li::before { content:'›'; position:absolute; left:0; color:var(--phase-mid); font-weight:900; }
+.why-box { grid-column:1/-1; border-left:3px solid var(--phase-mid); background:rgba(10,122,20,.1); border-radius:0 9px 9px 0; padding:10px 13px; }
+.why-l { font-family:'Nunito',sans-serif; font-weight:900; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--phase-mid); margin-bottom:3px; }
+.why-t { font-size:12.5px; color:var(--t-text); line-height:1.55; }
+.std-row { grid-column:1/-1; display:flex; align-items:flex-start; gap:8px; padding-top:9px; border-top:1px solid var(--t-l); }
+.std-l { font-family:'Nunito',sans-serif; font-weight:900; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--phase-mid); white-space:nowrap; padding-top:1px; }
+.std-v { font-size:11px; color:var(--t-soft); line-height:1.45; }
+
+@media print {
+  .topbar { display:none; }
+  .page { margin:0; padding:0; max-width:100%; }
+  .hs-slide { display:block !important; page-break-after:always; }
+  .sc,.tc2 { display:flex !important; box-shadow:none; border-radius:0; }
+  body.vs .tc2, body.vt .sc { display:none !important; }
+}
+</style>
+</head>
+<body class="vs subj-cr">
+
+<div class="topbar">
+  <div class="tl">
+    <a class="back-btn" href="../examine.html">&#8592; Examine</a>
+    <span class="phase-pill">EXAMINE</span>
+    <span class="grade-pill">9–12</span>
+    <span class="deck-label" id="deck-label">Collaborative Reading</span>
+  </div>
+  <div class="ctrl-area">
+    <div class="subj-tg">
+      <button class="subj-tb active" id="bscr"  onclick="setSubject('cr')">Reading</button>
+      <button class="subj-tb"        id="bscs"  onclick="setSubject('cs')">Science</button>
+      <button class="subj-tb"        id="bscss" onclick="setSubject('css')">Social Studies</button>
+    </div>
+    <div class="phase-nav" id="phase-nav">
+      <button class="nav-btn" id="prev-btn" onclick="prevPhase()" disabled>&#8592;</button>
+      <span class="slide-ctr" id="slide-ctr">Phase 1 of 5</span>
+      <button class="nav-btn" id="next-btn" onclick="nextPhase()">&#8594;</button>
+    </div>
+    <div class="tg">
+      <button class="tb active" id="bvs" onclick="setView('s')">Student</button>
+      <button class="tb"        id="bvt" onclick="setView('t')">Teacher</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="subj-panel cr"  id="cr9-panel"></div>
+  <div class="subj-panel cs"  id="cs9-panel"></div>
+  <div class="subj-panel css" id="css9-panel"></div>
+</div>
+
+<script>
+
+const MC  = { individual:'m-ind', pair:'m-pair', small:'m-sm', whole:'m-wh', vocab:'m-voc' };
+const ML  = { individual:'✏️\u202FIndividual', pair:'👥\u202FPartner', small:'◎\u202FSmall Group', whole:'◎\u202FWhole Class', vocab:'📚\u202FVocab Preview' };
+const PC  = { individual:'pr', pair:'pr', small:'pr', whole:'pr', vocab:'pv' };
+
+/* ═══════════════════════════════════════════════════════
+   COLLABORATIVE READING — 9–12
+═══════════════════════════════════════════════════════ */
+
+const CR9_PHASES = [
+
+{
+  num:1, name:`Central Claim & Author's Purpose`, label:`Phase 1 · Claim & Purpose`, timer:`9–10 min`,
+  purpose:`Read with a partner. What is the central claim? What does the author want you to think, believe, or do — and how do you know?`,
+  steps:[
+    { mode:`vocab`,      time:`1–2 min`, icon:`📚`, label:`Vocabulary Preview`,
+      prompt:`Key terms have been introduced. Write down 2–3 terms and brief definitions. You'll use these in Phase 3 and Phase 5.`,
+      starter:`Term: ___ · Meaning in context: ___` },
+    { mode:`pair`,       time:`4–5 min`, icon:`👥`, label:`Partner Read`,
+      prompt:`One partner reads aloud while the other tracks: What is the central claim? What does the author want you to think or do? Switch halfway.`,
+      starter:`The central claim seems to be… / The author's purpose appears to be…` },
+    { mode:`individual`, time:`2 min`,   icon:`🔍`, label:`Identify Claim & Purpose`,
+      prompt:`Write the central claim in one sentence. Then write the author's purpose — what do they want you to think, believe, or do?`,
+      starter:`The author's central claim is… / The author's purpose is to… / I know this because…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Share & Challenge`,
+      prompt:`State the claim and purpose. Others: agree, refine, or offer an alternative reading.`,
+      starter:`I read the central claim as… / I'd push back on that because… / The author's purpose seems to be… based on…` }
+  ],
+  teacher:{
+    obj:`Students identify the central claim and author's purpose, distinguishing between what the text says and what the author wants the reader to believe.`,
+    vocabNote:`Before the partner read, introduce 2–3 key terms students will be expected to use in Phase 3 and Phase 5 responses. Don't define exhaustively — give enough to not block comprehension. Students should encounter the words again in the text.`,
+    notes:[
+      `Partner reading at 9–12 serves fluency support and comprehension — the listening focus ("track: what is the central claim?") keeps both partners cognitively active.`,
+      `For particularly dense texts, read aloud once yourself before the partner read. This is especially useful for primary sources, scientific abstracts, or texts with complex syntax.`,
+      `Distinguishing claim from purpose is the move that separates passive reading from critical reading. At 9–12, students should read every text as a rhetorical act.`,
+      `Require vocabulary use explicitly in Phase 3 and Phase 5 — announce this before Phase 1 so students know what the terms are for.`
+    ],
+    why:`At 9–12, students should be reading every text as a rhetorical act. Identifying the author's purpose — not just the claim — is the foundation of source evaluation, which drives Phase 4.`,
+    std:`CCSS RI.2 · RI.6 · SL.1`
+  }
+},
+
+{
+  num:2, name:`Annotation`, label:`Phase 2 · Deep Annotation`, timer:`9 min`,
+  purpose:`Annotate for argument structure, assumptions, and what's absent — not just what's there. Write a note next to every marking.`,
+  steps:[
+    { mode:`individual`, time:`5 min`,   icon:`✏️`, label:`Read & Annotate`,
+      prompt:`Re-read with your full annotation set. Write a phrase next to every marking — explain your thinking, not just the symbol.`,
+      annot:['⭐ key idea','E evidence','❓ question','→ connection','! surprising','P perspective','A assumption','✗ absent / missing'] },
+    { mode:`pair`,       time:`2 min`,   icon:`👥`, label:`Partner Compare`,
+      prompt:`Compare annotations. Focus specifically: did you mark the same assumptions? Did you notice the same absences?`,
+      starter:`I marked [A/✗] at… because… / I didn't notice… until my partner pointed out… / The most significant absence is… because…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Share`,
+      prompt:`What assumptions did the author make? What is missing from this text? How do those absences affect the argument?` }
+  ],
+  teacher:{
+    obj:`Students annotate for argument structure, authorial assumptions, and significant absences — moving beyond content identification to rhetorical analysis.`,
+    vocabNote:`Remind students which vocabulary terms from Phase 1 to watch for as they annotate. A vocabulary term appearing in a key claim is worth marking with both E and the term itself.`,
+    notes:[
+      `The A (assumption) and ✗ (absent/missing) markings are the most analytically demanding — they require students to read what isn't there. Model explicitly before releasing: "What does the author assume you already believe? What evidence or perspective would change this argument?"`,
+      `Annotations at this level should be phrases, not words. "evidence" as a label is not enough; "evidence that contradicts the claim in paragraph 3" is.`,
+      `Partner comparison should focus on A and ✗ markings specifically — discrepancies here surface the most productive discussion for Phase 5.`,
+      `The ability to identify assumptions and absences is the foundation of source evaluation, historiography, and argument deconstruction — skills that appear on AP exams, college writing tasks, and civic reasoning.`
+    ],
+    why:`Rhetorical analysis at 9–12 means reading for what an author chose not to say as much as what they said. The A and ✗ markings make this visible and discussable.`,
+    std:`CCSS RI.1 · RI.6 · RI.8`
+  }
+},
+
+{
+  num:3, name:`CER — Claim, Evidence, Reasoning`, label:`Phase 3 · CER Response`, timer:`9 min`,
+  purpose:`Answer the question using CER format. Your response must include a claim, at least two pieces of evidence, and reasoning that explains why the evidence supports the claim. Use at least one vocabulary word.`,
+  steps:[
+    { mode:`whole`,      time:`1 min`,   icon:`🔄`, label:`Introduce`,
+      prompt:`Connect to Phase 1 claim and author's purpose. Today's question requires a full CER response. Vocabulary use required.`,
+      cer: true },
+    { mode:`individual`, time:`1 min`,   icon:`🔍`, label:`Annotate the Question`,
+      prompt:`What is the question asking? Underline the key analytical task.`,
+      annot:['How does the author use [structure/rhetoric] to develop the claim?','What assumptions does this text make?','How does the author\'s purpose shape the evidence?','What does this text leave out, and how does that affect the argument?'] },
+    { mode:`individual`, time:`5 min`,   icon:`✍️`, label:`Write Your CER`,
+      prompt:`C: State your claim. E: Cite two pieces of evidence precisely. R: Explain how and why the evidence supports the claim. Use at least one vocabulary word.`,
+      starter:`I argue that [claim]… / The evidence that supports this is [E1]… and [E2]… / This demonstrates [reasoning] because… / The term [vocabulary] is relevant here because…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Share & Evaluate`,
+      prompt:`One student shares. Class evaluates: Is the claim arguable? Is the evidence precise? Does the reasoning actually connect them?`,
+      starter:`The claim is arguable because… / The evidence would be stronger if… / The reasoning doesn't yet explain why…` }
+  ],
+  teacher:{
+    obj:`Students write a full CER response to an analytical question, citing precise evidence and explaining the reasoning that connects evidence to claim. Vocabulary use required.`,
+    vocabNote:`Vocabulary use is not optional — announce this explicitly before writing begins and write the terms on the board so students can reference them.`,
+    notes:[
+      `The R (Reasoning) is where most responses collapse. Push: "Why does this evidence matter? What does it prove? Why is it not just coincidence?" If R is weak, the whole response collapses.`,
+      `Common 9–12 question types: How does the author use [structure/rhetoric] to develop the central claim? What assumptions does this text make? How does the author's purpose shape the selection of evidence? What does this text leave out, and how does that affect the argument?`,
+      `Students who write strong E but weak R need sentence-level coaching: "Your evidence is specific. Now explain the mechanism — why does that evidence prove your claim?"`,
+      `CER is the cognitive structure underlying college writing, AP free-response, and disciplinary argument. Making it explicit and practiced every week builds the habit.`
+    ],
+    why:`CER makes the logical structure of argument visible. At 9–12, students need to write arguments that others can evaluate — not just conclusions they assert.`,
+    std:`CCSS RI.1 · RI.8 · W.1 · SL.4`
+  }
+},
+
+{
+  num:4, name:`Author's Craft & Source Evaluation`, label:`Phase 4 · Craft & Source`, timer:`9 min`,
+  purpose:`Analyze a specific author's choice — then evaluate the source itself. Who made this? What's left out? How does that change what you can conclude?`,
+  steps:[
+    { mode:`whole`,      time:`1 min`,   icon:`🔄`, label:`Introduce the Source`,
+      prompt:`What type of source is this? Who created it? What is its purpose? What do you already know about who created this and why?` },
+    { mode:`individual`, time:`2 min`,   icon:`🔎`, label:`Analyze the Craft`,
+      prompt:`What specific choice did the author or creator make? What effect does it have on the argument?`,
+      annot:['How does the author\'s use of [X] shape the reader\'s response?','What does this source include that the text doesn\'t — and vice versa?','How does the structure of this argument reinforce the author\'s purpose?'] },
+    { mode:`individual`, time:`3 min`,   icon:`🧐`, label:`Evaluate the Source`,
+      prompt:`Who made this? For what audience and purpose? What does it leave out? How does that affect what you can argue from it?`,
+      starter:`This source was likely created to… / It is useful for arguing… but limited because… / The most significant absence is… / A source that would complicate this is…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Share`,
+      prompt:`How does evaluating this source change what you can argue? What source would make your argument stronger?`,
+      starter:`This source strengthens/limits the argument that… because… / Even with this evidence, we cannot conclude… because… / To make a stronger argument, I would also need…` }
+  ],
+  teacher:{
+    obj:`Students analyze authorial craft choices and evaluate the source itself — audience, purpose, bias, and significant omissions.`,
+    vocabNote:`If any vocabulary terms from Phase 1 appear in the new source, draw attention to them. Vocabulary encountered in multiple sources strengthens transfer.`,
+    notes:[
+      `Phase 4 should feel like a mini rhetorical analysis + source evaluation. The source evaluation step is the new move at 9–12 — push students to see that every source has a perspective, and that acknowledging limits makes an argument stronger, not weaker.`,
+      `"Who made this and why?" is a more productive entry point than "Is this source good or bad?" All sources are useful for something; the question is what.`,
+      `For texts that are themselves sources (not separate visuals), Phase 4 can focus on a single rhetorical choice: "Why did the author choose to open with this anecdote rather than data?" This is still source analysis.`,
+      `Source evaluation is foundational to college-level research writing, AP Document-Based Questions, and civic information literacy.`
+    ],
+    why:`Every text is a rhetorical act made by someone for a purpose. Students who can evaluate sources independently can navigate information environments that will only grow more complex.`,
+    std:`CCSS RI.6 · RI.8 · RI.9 · SL.4`
+  }
+},
+
+{
+  num:5, name:`Discussion`, label:`Phase 5 · Argument & Evaluation`, timer:`9–10 min`,
+  purpose:`Take a position on the author's argument — its strengths, limits, assumptions, and what it leaves unresolved. Defend it. Revise it if challenged.`,
+  steps:[
+    { mode:`whole`,      time:`1 min`,   icon:`🔄`, label:`Introduce the Question`,
+      prompt:`There is no single right answer. This question asks you to evaluate the author's argument as a whole — its effectiveness, assumptions, and what it cannot prove.` },
+    { mode:`individual`, time:`2–3 min`, icon:`🧠`, label:`Write Your Position`,
+      prompt:`Write a position statement. Include your claim, your strongest evidence, and the most significant limit or counterargument. Use at least one vocabulary term.`,
+      starter:`I argue that [author] [effectively/insufficiently] demonstrates… because… / The strongest evidence for this is… / However, this argument is limited by… / A more complete argument would also…` },
+    { mode:`whole`,      time:`5 min`,   icon:`💬`, label:`Discussion`,
+      prompt:`Share your position. The goal is not consensus but the most defensible argument. Challenge, build, and revise.`,
+      starter:`[Name]'s argument is strong, but it doesn't account for… / The assumption underlying that argument is… / I'd revise my position because… / The strongest version of the opposing argument is…` }
+  ],
+  teacher:{
+    obj:`Students take and defend a position on the author's argument using evidence, acknowledging counterarguments and the role of assumption and omission.`,
+    vocabNote:`Explicitly require vocabulary use in written positions before discussion begins. Call out strong examples during discussion: "Notice how [student] used [term] — that's exactly the kind of precision we're after."`,
+    notes:[
+      `Strong Phase 5 questions at 9–12 require evaluation — "Is the author's argument convincing? Why or why not?" / "Does the author's perspective limit the argument? Explain." Push for counterarguments in every written response.`,
+      `Students who can articulate the strongest version of an argument they disagree with are demonstrating the highest-order thinking. Prompt: "What's the best version of the argument against yours?"`,
+      `Discussion is more productive when students have already committed to a written claim. Students who can't write a position before discussion often can't sustain one during it.`,
+      `Sentence starters for productive disagreement: "The assumption underlying that position is…" / "That argument doesn't account for…" / "I'd revise my position to include…"`
+    ],
+    why:`Taking a position and defending it under peer pressure is the cognitive move that separates analysis from summary. It directly prepares students for the Defend Your Thinking protocol and for college-level discourse.`,
+    std:`CCSS RI.8 · RI.9 · W.1 · SL.1 · SL.4`
+  }
+}
+
+]; // end CR9_PHASES
+
+/* ═══════════════════════════════════════════════════════
+   COLLABORATIVE SCIENCE — 9–12
+═══════════════════════════════════════════════════════ */
+
+const CS9_PHASES = [
+
+{
+  num:1, name:`Central Claim & Scientific Purpose`, label:`Phase 1 · Claim & Purpose`, timer:`9–10 min`,
+  purpose:`Read with a partner. What is the scientist's central claim? What kind of evidence do they use — and what is this investigation trying to prove?`,
+  steps:[
+    { mode:`vocab`,      time:`1–2 min`, icon:`📚`, label:`Vocabulary Preview`,
+      prompt:`Key scientific terms have been introduced. Write them down with brief definitions. You'll use these in Phase 3 and Phase 5.`,
+      starter:`Term: ___ · Scientific meaning: ___` },
+    { mode:`pair`,       time:`4 min`,   icon:`👥`, label:`Partner Read`,
+      prompt:`One partner reads aloud while the other tracks: What claim is being made? What type of evidence do they use? Switch halfway.`,
+      starter:`The scientific claim seems to be… / The evidence type is… / The investigation is designed to…` },
+    { mode:`individual`, time:`2 min`,   icon:`🔍`, label:`Identify Claim & Purpose`,
+      prompt:`Write the scientific claim in one sentence. Identify the investigation's purpose: What question is this trying to answer? What would disprove it?`,
+      starter:`The central claim is… / The investigation is designed to… / The evidence type is [data/observation/model/experiment] because… / This claim could be disproved by…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Share & Challenge`,
+      prompt:`State the claim and purpose. Is this a strong claim? Is it testable? What would it take to disprove it?`,
+      starter:`The claim is [well-supported/limited] because… / To disprove this, you would need to show… / An alternative explanation might be…` }
+  ],
+  teacher:{
+    obj:`Students identify the central scientific claim, the investigation's purpose, and the type of evidence used — and begin to evaluate the claim's testability.`,
+    vocabNote:`Introduce scientific vocabulary students will use in Phase 3 CER responses and Phase 5 discussion — especially terms related to the evidence type (variable, controlled experiment, correlation, causation, etc.).`,
+    notes:[
+      `At 9–12, the "what would disprove it?" question is essential — it shifts students from passive reading to active scientific evaluation. A claim that can't be disproven is not science.`,
+      `Partner reading with a science focus should track evidence type (data, model, experiment, observation) specifically — this sets up Phase 3's methodology evaluation.`,
+      `For scientific abstracts or research papers, a teacher read-through before the partner read is appropriate. Dense methodology sections can be skimmed — the claim and evidence type are the targets.`,
+      `Remind students which vocabulary terms from Phase 1 to watch for as they read.`
+    ],
+    why:`Evaluating the testability and falsifiability of a claim is the foundational practice of scientific literacy. Students who ask "what would disprove this?" read science texts actively rather than receptively.`,
+    std:`NGSS SEP 6 · SEP 7 · CCSS RI.1 · RI.2`
+  }
+},
+
+{
+  num:2, name:`Annotation`, label:`Phase 2 · Scientific Annotation`, timer:`9 min`,
+  purpose:`Annotate for claim structure, methodology, data limits, and what the investigation cannot prove. Write a phrase next to every marking.`,
+  steps:[
+    { mode:`individual`, time:`5 min`,   icon:`✏️`, label:`Read & Annotate`,
+      prompt:`Re-read — including all figures, tables, and graphs. Write a phrase next to every marking. Annotate methodology as well as results.`,
+      annot:['C claim','E evidence','D data / measurement','M model','❓ question','! surprising','A assumption','✗ absent / not controlled'] },
+    { mode:`pair`,       time:`2 min`,   icon:`👥`, label:`Partner Compare`,
+      prompt:`Compare annotations. Did you mark the same methodology limits? The same assumptions? The same anomalies?`,
+      starter:`I marked [A/✗] at… because… / The most important absence is… / I didn't notice… until my partner pointed out…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Share`,
+      prompt:`What assumptions does this investigation make? What is absent or not controlled for? How do those limits affect the claim?` }
+  ],
+  teacher:{
+    obj:`Students annotate scientific texts and data using content-appropriate markings, extending to methodology evaluation and identification of uncontrolled variables.`,
+    vocabNote:`A vocabulary term appearing in a key data finding is worth marking with both D and the term. This reinforces the connection between scientific vocabulary and data interpretation.`,
+    notes:[
+      `The ✗ (absent/not controlled) marking is the most analytically demanding — it requires students to identify what the investigation didn't measure or control for. Model explicitly: "What variable might affect this result that the researchers didn't account for?"`,
+      `Annotation at 9–12 should extend to methodology observations — 'This experiment didn't control for confounding variable X' is a valid and important annotation.`,
+      `Partner comparison should focus on A and ✗ specifically — discrepancies here surface the most productive scientific disagreement in Phase 5.`,
+      `Students who annotate figures and data tables separately from text are demonstrating integrated scientific literacy — recognize and reinforce this.`
+    ],
+    why:`Scientific annotation at 9–12 means reading for what the investigation couldn't control or prove as much as what it found. This is the foundation of evaluating scientific claims responsibly.`,
+    std:`NGSS SEP 4 · SEP 8 · CCSS RI.1`
+  }
+},
+
+{
+  num:3, name:`CER — Scientific Reasoning`, label:`Phase 3 · CER Response`, timer:`9 min`,
+  purpose:`Write a CER response using data, observations, or experimental evidence. Acknowledge at least one limit of the evidence. Use at least one vocabulary word.`,
+  steps:[
+    { mode:`whole`,      time:`1 min`,   icon:`🔄`, label:`Introduce`,
+      prompt:`Connect to Phase 1 claim. Today's question requires a full CER response with specific data citation. Vocabulary use required.`,
+      cer: true },
+    { mode:`individual`, time:`2 min`,   icon:`🔍`, label:`Study the Data`,
+      prompt:`Read the question. Study any tables, graphs, or figures carefully. Annotate the question stem.`,
+      annot:['Construct an argument using evidence to explain…','Evaluate which experimental design most effectively tests…','Using the data, identify the most significant variable and explain its effect…','What does the data prove — and what can it not prove?'] },
+    { mode:`individual`, time:`4–5 min`, icon:`✍️`, label:`Write Your CER`,
+      prompt:`C: State your scientific claim. E: Cite specific data (figures, measurements, trends). R: Explain the scientific mechanism — why does this evidence support the claim? Include at least one limit.`,
+      starter:`Based on the data, I claim that… / The evidence that supports this is [specific data point]… / This demonstrates [reasoning] because scientifically… / A limit of this evidence is… / The term [vocabulary] is relevant because…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Evaluate`,
+      prompt:`Is the reasoning scientifically accurate? Does the evidence actually support the claim, or does it just correlate?`,
+      starter:`The claim is supported by… but this reasoning doesn't account for… / Correlation doesn't prove causation here because… / The evidence would be stronger if…` }
+  ],
+  teacher:{
+    obj:`Students write a full CER response to an analytical science question, citing specific data and explaining the scientific mechanism. Vocabulary and evidence limits required.`,
+    vocabNote:`Vocabulary use is not optional. Write the Phase 1 vocabulary terms on the board before Phase 3 begins.`,
+    notes:[
+      `The R (Reasoning) at 9–12 must explain the scientific mechanism — not just "this data supports the claim" but "this data supports the claim because the underlying mechanism is X." If the mechanism is absent, the reasoning is incomplete.`,
+      `Common 9–12 stems: "Construct an argument using evidence to explain…", "Evaluate which experimental design most effectively tests…", "Using the data, identify the most significant variable and explain its effect…", "What does the data prove — and what can it not prove?"`,
+      `Require an acknowledged limit in every CER response. Students who identify limits of evidence are demonstrating stronger scientific thinking than those who ignore them.`,
+      `Push the distinction between correlation and causation explicitly — this is where the most common reasoning errors occur at 9–12.`
+    ],
+    why:`CER in science makes the logical structure of scientific argument visible. At 9–12, students must explain mechanisms, not just cite data — this is the distinction between science and pseudoscience.`,
+    std:`NGSS SEP 4 · SEP 5 · SEP 6 · CCSS RI.1 · W.1 · SL.4`
+  }
+},
+
+{
+  num:4, name:`Evaluate Design Tradeoffs`, label:`Phase 4 · Engineering Design`, timer:`9 min`,
+  purpose:`Evaluate two or more engineering design solutions using science from the text. No solution is perfect — identify the best choice given the constraints and explain the tradeoffs honestly.`,
+  steps:[
+    { mode:`whole`,      time:`1 min`,   icon:`🔄`, label:`Introduce`,
+      prompt:`Connect Phase 1 science to a real design problem. You will evaluate solutions — not just choose one. Think: what criteria and constraints does the science suggest?` },
+    { mode:`individual`, time:`2 min`,   icon:`🎵`, label:`Re-read — Engineering Lens`,
+      prompt:`What does the science tell us about what a good solution must do? What tradeoffs appear between solutions?`,
+      annot:['Evaluate which design solution best meets the criteria while minimizing tradeoffs…','Identify one design factor not considered — using scientific reasoning, explain why it matters…','Which solution would you refine, and how? What does the science tell you about the limits of your refinement?'] },
+    { mode:`individual`, time:`4 min`,   icon:`⚙️`, label:`Write Your Evaluation`,
+      prompt:`Identify the strongest solution and explain the tradeoffs. Acknowledge what your preferred solution cannot do. Use scientific reasoning from the text.`,
+      starter:`The strongest solution is… because the science shows… / However, this solution is limited by… / The key tradeoff is… / To reduce this tradeoff, one would need to… / This is supported by the evidence in paragraph…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Present & Challenge`,
+      prompt:`State your evaluation. Others: challenge the tradeoff analysis or propose a refinement.`,
+      starter:`I'd argue Solution B is stronger because… / The tradeoff you identified matters, but… / The science from the text suggests the limit could be addressed by… / A factor you haven't considered is…` }
+  ],
+  teacher:{
+    obj:`Students apply science content to evaluate engineering design solutions, articulating tradeoffs and limits using scientific reasoning (NGSS ETS1).`,
+    vocabNote:`Scientific vocabulary from Phase 1 should appear in the engineering reasoning — students should be able to name the mechanism that makes Solution A better or worse.`,
+    notes:[
+      `At 9–12, there is no "right" solution — only better-supported evaluations. Push students to articulate what their preferred solution cannot do: "What constraint makes Solution A imperfect?"`,
+      `Common 9–12 stems: "Evaluate which design solution best meets the criteria while minimizing tradeoffs…", "Identify one design factor not considered — using scientific reasoning, explain why it matters…", "Which solution would you refine, and how?"`,
+      `Require students to address at least one constraint or tradeoff in their evaluation — not doing so is an incomplete argument.`,
+      `Phase 4 bridges science content knowledge (Phases 1–3) to the engineering design challenge students are working on in their DEEDS project.`
+    ],
+    why:`NGSS ETS1 requires applying disciplinary science to design problems — not just recalling content. Phase 4 makes this connection explicit, building the bridge between science understanding and the engineering work of the DEEDS project.`,
+    std:`NGSS ETS1-1 · ETS1-2 · SEP 6 · CCSS SL.4`
+  }
+},
+
+{
+  num:5, name:`Data Discussion`, label:`Phase 5 · Competing Explanations`, timer:`9–10 min`,
+  purpose:`There is no single right answer. Evaluate competing explanations for what the data shows. Defend the most scientifically defensible position — and identify what would change your mind.`,
+  steps:[
+    { mode:`whole`,      time:`1 min`,   icon:`🔄`, label:`Introduce the Question`,
+      prompt:`There is no single right answer. The question asks you to evaluate competing explanations for the same data. Use evidence and scientific reasoning. Vocabulary use required.` },
+    { mode:`individual`, time:`2–3 min`, icon:`🧠`, label:`Write Your Position`,
+      prompt:`Write your claim. Cite specific data. State the competing explanation — and explain why the evidence favors yours. Identify what would change your mind.`,
+      starter:`The data most strongly supports… because… / An alternative explanation is… but this is less supported because… / This explanation would be disproven if… / The term [vocabulary] is relevant because…` },
+    { mode:`whole`,      time:`5 min`,   icon:`💬`, label:`Discussion`,
+      prompt:`Share and challenge. What is the most scientifically defensible position? What would it take to resolve the disagreement?`,
+      starter:`The evidence favors [explanation] because… / That argument doesn't account for [data point]… / We cannot conclude… from this data because… / My position would change if the data showed…` }
+  ],
+  teacher:{
+    obj:`Students engage in evidence-based scientific discussion, evaluating competing explanations for the same data and defending positions with specific evidence and scientific reasoning (NGSS SEP 7, SEP 4).`,
+    vocabNote:`Call out strong vocabulary use during discussion explicitly — it reinforces the expectation and models precision for others.`,
+    notes:[
+      `Phase 5 is not about consensus — it's about the most defensible scientific position. Students who can articulate the strongest version of an explanation they disagree with are demonstrating scientific reasoning at its highest level.`,
+      `Sentence starters for productive scientific disagreement: "I see the same data differently because…" / "That explanation doesn't account for [specific data point]…" / "My position would change if the data showed…"`,
+      `Common Phase 5 data question types at 9–12: analyzing competing causal explanations, evaluating which variable had the greatest impact, evaluating a study design, assessing what additional data would resolve the disagreement.`,
+      `Collect written positions from Phase 5 — they are your best formative data on students' ability to reason from evidence, which is the core of the DEEDS Examine continuum.`
+    ],
+    why:`Competing explanations — not consensus — is what drives scientific inquiry. Phase 5 gives students weekly practice in the highest-order scientific practice: evaluating which explanation is most defensible given the available evidence.`,
+    std:`NGSS SEP 4 · SEP 7 · CCSS SL.1 · SL.4`
+  }
+}
+
+]; // end CS9_PHASES
+
+/* ═══════════════════════════════════════════════════════
+   COLLABORATIVE SOCIAL STUDIES — 9–12
+═══════════════════════════════════════════════════════ */
+
+const CSS9_PHASES = [
+
+{
+  num:1, name:`Central Argument & Perspective`, label:`Phase 1 · Argument & Perspective`, timer:`9–10 min`,
+  purpose:`Read with a partner. What is the central argument? Whose perspective does it reflect — and what does that mean for how we read it?`,
+  steps:[
+    { mode:`vocab`,      time:`1–2 min`, icon:`📚`, label:`Vocabulary Preview`,
+      prompt:`Key terms have been introduced. Write them down with brief definitions. You'll use these in Phase 3 and Phase 5.`,
+      starter:`Term: ___ · Historical or social meaning: ___` },
+    { mode:`pair`,       time:`4 min`,   icon:`👥`, label:`Partner Read`,
+      prompt:`One partner reads aloud while the other tracks: What argument is being made? Whose perspective does it reflect? Switch halfway.`,
+      starter:`The central argument seems to be… / This text reflects the perspective of… / A perspective likely absent from this account is…` },
+    { mode:`individual`, time:`2 min`,   icon:`🔍`, label:`Identify Argument & Perspective`,
+      prompt:`Write the central argument. Identify: who is the author? What is their position? What perspective might they not represent?`,
+      starter:`The central argument is… / This text reflects the perspective of… / A perspective likely absent from this account is… because…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Share & Challenge`,
+      prompt:`Is this argument persuasive? What does it assume? What does it leave out?`,
+      starter:`The argument is [well-supported/limited] because… / The author assumes… / To fully evaluate this argument, you'd also need…` }
+  ],
+  teacher:{
+    obj:`Students identify the central argument and the perspective it reflects, distinguishing between what the text argues and whose voice is centered.`,
+    vocabNote:`Introduce historical or social science vocabulary students will use in Phase 3 CER responses and Phase 5 historiographical discussion — especially terms related to periodization, causation, perspective, and power.`,
+    notes:[
+      `At 9–12, the perspective question is not optional — it's foundational. Who is speaking, and who isn't? This sets up the historiographical analysis in Phase 5.`,
+      `Partner reading with a social studies focus should track perspective specifically — "whose voice is this?" is the guiding question throughout.`,
+      `For primary sources, the "who is the author and what was their position?" step requires more time — give students an additional 30 seconds to note what they know about the source before reading.`,
+      `The vocabulary preview should include terms related to the historical period, social phenomenon, or political context — not just content vocabulary.`
+    ],
+    why:`At 9–12, social studies literacy means reading every text as a perspective, not a neutral account. Students who recognize argument and perspective can evaluate sources rather than simply consuming them.`,
+    std:`NYS SS: Gathering, Interpreting, and Using Evidence · CCSS RI.2 · RI.6 · SL.1`
+  }
+},
+
+{
+  num:2, name:`Annotation`, label:`Phase 2 · Historical Annotation`, timer:`9 min`,
+  purpose:`Annotate for argument structure, authorial assumptions, perspective, and what's absent or unrepresented. Write a phrase next to every marking.`,
+  steps:[
+    { mode:`individual`, time:`5 min`,   icon:`✏️`, label:`Read & Annotate`,
+      prompt:`Re-read — including maps, timelines, data tables, and images. Write a phrase next to every marking. Annotate what's absent as well as what's present.`,
+      annot:['⭐ key argument','E evidence','❓ question','→ connection','! surprising','P perspective / point of view','A assumption','✗ absent / unrepresented'] },
+    { mode:`pair`,       time:`2 min`,   icon:`👥`, label:`Partner Compare`,
+      prompt:`Compare annotations. Did you mark the same assumptions? The same absent perspectives? The same surprising claims?`,
+      starter:`I marked [A/✗] at… because… / The most important absence is… / I didn't notice… until my partner pointed out… / I marked P here because the perspective is…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Share`,
+      prompt:`What assumptions does the author make? Whose perspective is absent? How do those absences affect the argument?` }
+  ],
+  teacher:{
+    obj:`Students annotate social studies texts and visual sources, extending to the identification of authorial assumptions and absent or unrepresented perspectives.`,
+    vocabNote:`Watch for vocabulary terms from Phase 1 appearing in key argument moments — annotating these with both the appropriate marking and the term reinforces both skills.`,
+    notes:[
+      `The ✗ (absent/unrepresented) marking is the most analytically demanding in social studies — it requires students to identify whose story is not being told. Model explicitly: "Who would see this event differently? Why aren't they represented in this source?"`,
+      `Annotation at 9–12 should extend to visual sources — maps, graphs, and images are as argumentative as text. Ask: "What does this map include and exclude? Whose territory isn't labeled?"`,
+      `Partner comparison should focus on A and ✗ markings — discrepancies here surface the most productive historiographical disagreement in Phase 5.`,
+      `The A (assumption) marking at 9–12 should name the specific assumption, not just mark its location: "A — assumes the treaty was ratified without resistance."`,
+    ],
+    why:`Historical literacy at 9–12 means reading for whose perspective is centered and whose is absent. Students who annotate for absence are practicing the foundational skill of historiography.`,
+    std:`NYS SS: Gathering, Interpreting, and Using Evidence · CCSS RI.1 · RI.6`
+  }
+},
+
+{
+  num:3, name:`CER — Historical & Social Analysis`, label:`Phase 3 · CER Response`, timer:`9 min`,
+  purpose:`Write a CER response to an analytical question. Your claim must be arguable, your evidence must be specific, and your reasoning must connect evidence to a broader historical or social pattern. Use at least one vocabulary word.`,
+  steps:[
+    { mode:`whole`,      time:`1 min`,   icon:`🔄`, label:`Introduce`,
+      prompt:`Connect to Phase 1 argument. Today's questions require full CER responses. Vocabulary use required.`,
+      cer: true },
+    { mode:`individual`, time:`2 min`,   icon:`🔍`, label:`Study the Text & Visuals`,
+      prompt:`Read both questions. Study any maps, timelines, or data. Annotate the question stem.`,
+      annot:['Construct an argument explaining how… using evidence from multiple sources…','How did earlier events influence… Explain the relationship…','Compare the perspectives of [Group A] and [Group B] on…','Evaluate whose interests were served by… and whose were not','Using evidence from the text and the [map/graph], explain the relationship between…'] },
+    { mode:`individual`, time:`4–5 min`, icon:`✍️`, label:`Write Your CER`,
+      prompt:`C: Your arguable historical or social claim. E: Two pieces of specific evidence (text + visual when possible). R: Explain the historical or social pattern the evidence reveals. Use at least one vocabulary term.`,
+      starter:`I argue that… / The evidence that supports this is… [text citation] and… [visual/data citation] / This demonstrates… because historically… / The term [vocabulary] is relevant here because… / This pattern connects to…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Evaluate`,
+      prompt:`Is the reasoning historically grounded? Does it account for multiple groups or perspectives? Does the evidence actually support the claim?`,
+      starter:`The claim is arguable because… / The reasoning would be stronger if it accounted for… / The evidence from [source] actually suggests a more complicated picture because…` }
+  ],
+  teacher:{
+    obj:`Students write a full CER response using a targeted SS practice, citing evidence from text and visual sources and explaining the historical or social pattern the evidence reveals. Vocabulary required.`,
+    vocabNote:`Vocabulary use is not optional. Write the Phase 1 terms on the board. Call out strong examples during the evaluation step.`,
+    notes:[
+      `The R (Reasoning) at 9–12 must name the historical or social pattern, not just restate the evidence: "This demonstrates the pattern of X because historically Y leads to Z." If the pattern is absent, the reasoning is incomplete.`,
+      `Common 9–12 stems: "Construct an argument explaining how… using evidence from multiple sources…", "Compare the perspectives of [Group A] and [Group B] on…", "Evaluate whose interests were served by…", "Using evidence from the text and the [map/graph], explain the relationship between…"`,
+      `Require evidence from both text and visual source when possible — students who cite only text are missing the synthesis skill.`,
+      `At 9–12, the two questions should span different SS practices (e.g., one Chronological Reasoning, one Comparison and Contextualization) to build the full range of analytical skills.`
+    ],
+    why:`CER in social studies makes visible the difference between asserting a historical interpretation and arguing for one. At 9–12, students must connect evidence to broader patterns — this is the move from description to historiography.`,
+    std:`NYS SS: Chronological Reasoning · Comparison and Contextualization · Economics · CCSS RI.1 · W.1 · SL.4`
+  }
+},
+
+{
+  num:4, name:`Visual Source Evaluation`, label:`Phase 4 · Source Evaluation`, timer:`9 min`,
+  purpose:`Analyze a new visual source — then evaluate it. Who created it, for what purpose, and what does it leave out? How does that change what you can argue?`,
+  steps:[
+    { mode:`whole`,      time:`1 min`,   icon:`🔄`, label:`Introduce the Source`,
+      prompt:`What is this source? Who created it, when, and for what purpose? What do you already know about the context in which it was produced?` },
+    { mode:`individual`, time:`3–4 min`, icon:`🗺️`, label:`Analyze & Evaluate`,
+      prompt:`What patterns, comparisons, or changes does this source make visible? Then: What does it leave out? How does that affect the argument you can build from it?`,
+      annot:['How does this [map/graph/image] support, challenge, or complicate the text\'s argument?','Whose perspective shaped the creation of this source?','What is missing from this data — and why might that matter?','How does this source change or deepen your understanding of…?'] },
+    { mode:`individual`, time:`2 min`,   icon:`✍️`, label:`Write Your Analysis`,
+      prompt:`Write your response using the source and the text. Acknowledge both what the source shows and what it cannot prove. Use at least one vocabulary term.`,
+      starter:`This source reveals… / It is useful for arguing… but limited because… / The most significant absence is… / This source reflects the perspective of… which means… / A source that would complicate or strengthen this is…` },
+    { mode:`whole`,      time:`2 min`,   icon:`💬`, label:`Share`,
+      prompt:`How does evaluating this source change what you can argue? What source would make your argument stronger or more complete?`,
+      starter:`This source strengthens/limits the argument that… because… / Even with this evidence, we cannot conclude… because… / To build a stronger argument, I would also need a source that…` }
+  ],
+  teacher:{
+    obj:`Students analyze a new visual source and evaluate it as a constructed artifact — audience, purpose, bias, and significant omissions (NYSS Gathering, Interpreting, and Using Evidence + Geographic Reasoning).`,
+    vocabNote:`If vocabulary terms from Phase 1 appear in the visual source context, draw attention to them — vocabulary encountered in multiple source types strengthens transfer.`,
+    notes:[
+      `"Who made this and why?" is more productive than "Is this a good source?" All sources are useful for something — the question is what. Students should be able to articulate both the source's usefulness and its limits.`,
+      `For maps specifically: What is labeled and what isn't? What projection is used? What borders are drawn and by whom? These are all argumentative choices.`,
+      `Require students to name what source they would need to make a stronger argument — this is the highest-order source evaluation skill.`,
+      `Phase 4 at 9–12 should feel like a mini DBQ (Document-Based Question) setup — students are evaluating a source in context, not just describing it.`
+    ],
+    why:`Every source in social studies is a perspective, not a neutral record. At 9–12, students who can evaluate sources independently can resist manipulation, navigate complex information, and build nuanced historical arguments.`,
+    std:`NYS SS: Gathering, Interpreting, and Using Evidence · Geographic Reasoning · CCSS RI.7 · SL.4`
+  }
+},
+
+{
+  num:5, name:`Historiography & Multiple Perspectives`, label:`Phase 5 · Historical Discussion`, timer:`9–10 min`,
+  purpose:`There is no single right answer. Historians disagree about this. Evaluate the most defensible interpretation — and acknowledge what it cannot fully explain.`,
+  steps:[
+    { mode:`whole`,      time:`1 min`,   icon:`🔄`, label:`Introduce the Question`,
+      prompt:`There is no single right answer. Historians disagree about this event, period, or issue. Your goal is to identify the most defensible interpretation — and acknowledge what it can't fully explain. Vocabulary use required.` },
+    { mode:`individual`, time:`2–3 min`, icon:`🧠`, label:`Write Your Position`,
+      prompt:`Write your interpretation. Cite evidence. Acknowledge a competing perspective — and explain why your interpretation is still more defensible. Use at least one vocabulary term.`,
+      starter:`The most defensible interpretation is… because… / A competing perspective argues… This is less convincing because… / The evidence I find most significant is… because it reveals… / This interpretation cannot fully account for… / The term [vocabulary] is relevant because…` },
+    { mode:`whole`,      time:`5 min`,   icon:`💬`, label:`Discussion`,
+      prompt:`Share and challenge. Which interpretation is most defensible given the evidence? What additional source would change the conversation?`,
+      starter:`[Name]'s interpretation is compelling, but it doesn't account for… / The assumption underlying that argument is… / I'd revise my interpretation to include… / The most important piece of missing evidence is… / My position would change if we had a source that…` }
+  ],
+  teacher:{
+    obj:`Students engage in historiographical discussion — evaluating competing interpretations of the same event or issue, citing evidence, and acknowledging the role of perspective in shaping historical accounts (Civic Participation: connect to contemporary relevance).`,
+    vocabNote:`Call out strong vocabulary use during discussion explicitly — it models precision for the whole class and reinforces the expectation.`,
+    notes:[
+      `Phase 5 discussions at 9–12 should explicitly connect to contemporary relevance — "How does this historical pattern show up today?" — without reducing history to presentism. Push students to distinguish between "this is similar to" and "this caused."`,
+      `Students who can articulate the strongest version of an argument they disagree with are demonstrating historiographical thinking at its highest level. Prompt: "What's the best version of the argument against yours? Can you steel-man it?"`,
+      `Productive disagreement sentence starters: "I see the same evidence differently because…" / "The assumption underlying that interpretation is…" / "My position would change if we had a source that…"`,
+      `Collect written positions from Phase 5 — they are your formative assessment of historiographical reasoning, which is the core social studies skill at 9–12.`
+    ],
+    why:`Historiography — the study of how history is interpreted and why interpretations differ — is the ultimate goal of social studies at 9–12. Phase 5 gives students weekly practice in defending and revising interpretations based on evidence, which is what historians actually do.`,
+    std:`NYS SS: Civic Participation · Gathering, Interpreting, and Using Evidence · CCSS SL.1 · SL.4`
+  }
+}
+
+]; // end CSS9_PHASES
+
+/* ═══════════════════════════════════════════════════════
+   RENDER FUNCTIONS
+═══════════════════════════════════════════════════════ */
+
+const MC9  = { individual:'m-ind', pair:'m-pair', small:'m-sm', whole:'m-wh', vocab:'m-voc' };
+const ML9  = { individual:'✏️\u202FIndividual', pair:'👥\u202FPartner', small:'◎\u202FSmall Group', whole:'◎\u202FWhole Class', vocab:'📚\u202FVocab Preview' };
+const PC9  = { individual:'pr', pair:'pr', small:'pr', whole:'pr', vocab:'pv' };
+
+function buildCard9(step) {
+  const mc = MC9[step.mode] || 'm-wh';
+  const ml = ML9[step.mode] || step.mode;
+  const pc = PC9[step.mode] || 'pr';
+  const starter = step.starter ? `<div class="c-starter">${step.starter}</div>` : '';
+  const annotKey = step.annot ? `<div class="annot-key">${step.annot.map(a=>`<span class="ak">${a}</span>`).join('')}</div>` : '';
+  const cerRow = step.cer ? `<div class="cer-row"><span class="cer-badge cer-c">C Claim</span><span class="cer-badge cer-e">E Evidence</span><span class="cer-badge cer-r">R Reasoning</span></div>` : '';
+  return `<div class="cw"><div class="pc ${pc}">
+    <div class="cm"><span class="mode-pill ${mc}">${ml}</span><span class="c-time">⏳\u202F${step.time}</span></div>
+    <div class="c-icon">${step.icon}</div>
+    <div class="c-label">${step.label}</div>
+    <div class="c-prompt">${step.prompt}</div>
+    ${cerRow}${annotKey}${starter}
+  </div></div>`;
+}
+
+function buildSlide9(ph, idx, subject, prefix) {
+  const cards = ph.steps.map((s,i)=>buildCard9(s)+(i<ph.steps.length-1?'<div class="card-arrow">›</div>':'')).join('');
+  const fac = ph.teacher.notes.map(n=>`<li>${n}</li>`).join('');
+  const vocabNote = ph.teacher.vocabNote ? `<div style="background:var(--m-voc-bg);border:1px solid var(--m-voc-b);border-radius:7px;padding:8px 11px;margin-bottom:8px;"><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--m-voc-t);margin-bottom:3px;">Vocabulary Note</div><div style="font-size:11px;color:#713F12;line-height:1.4;">${ph.teacher.vocabNote}</div></div>` : '';
+  return `
+  <div class="hs-slide${idx===0?' active':''}" data-idx="${idx}">
+    <div class="sc">
+      <div class="sh">
+        <div class="shl">
+          <span class="phase-pill">EXAMINE</span>
+          <span class="phase-num-badge">Phase ${ph.num}</span>
+          <span class="type-badge badge-r">${subject}</span>
+        </div>
+        <div class="timer">⏱\u202F${ph.timer}</div>
+      </div>
+      <div class="sb">
+        <div class="s-phase-label">${ph.label}</div>
+        <div class="s-title">${ph.name}</div>
+        <div class="s-sub">${ph.purpose}</div>
+        <div class="cr">${cards}</div>
+      </div>
+    </div>
+    <div class="tc2">
+      <div class="t-hdr">
+        <div class="t-hdr-l">
+          <div class="t-ey">Teacher Background — ${subject} (9–12)</div>
+          <div class="t-ttl">${ph.label}</div>
+        </div>
+        <div class="t-meta">
+          <div class="t-ml">Objective</div>
+          <div class="t-mv" style="font-size:10px;max-width:170px;text-align:right;line-height:1.3">${ph.teacher.obj}</div>
+        </div>
+      </div>
+      <div class="t-body">
+        <div class="t-sec" style="grid-column:1/-1;">
+          <div class="t-sec-title">Facilitation Notes</div>
+          ${vocabNote}
+          <ul class="fac-list">${fac}</ul>
+        </div>
+        <div class="why-box"><div class="why-l">Why this phase, why now</div><div class="why-t">${ph.teacher.why}</div></div>
+        <div class="std-row"><div class="std-l">Standards</div><div class="std-v">${ph.teacher.std}</div></div>
+      </div>
+    </div>
+    <div class="phase-dots" id="${prefix}dots${idx}"></div>
+  </div>`;
+}
+
+function buildPanel9(phases, panelId, subject, prefix) {
+  const panel = document.getElementById(panelId);
+  panel.innerHTML = phases.map((ph,i)=>buildSlide9(ph,i,subject,prefix)).join('');
+  const dotsHTML = phases.map((_,i)=>`<div class="phase-dot" id="${prefix}dot${i}" onclick="goToPhase(${i})"></div>`).join('');
+  document.querySelectorAll(`[id^="${prefix}dots"]`).forEach(el => { el.innerHTML = dotsHTML; });
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════════ */
+
+let currentPhase = 0;
+
+function getConfig9() {
+  const b = document.body;
+  if(b.classList.contains('subj-cta')) return { phases:CS9_PHASES,  panelId:'cs9-panel',  prefix:'cs9'  };
+  if(b.classList.contains('subj-css')) return { phases:CSS9_PHASES, panelId:'css9-panel', prefix:'css9' };
+  return { phases:CR9_PHASES, panelId:'cr9-panel', prefix:'cr9' };
+}
+
+function goToPhase(idx) {
+  const { panelId } = getConfig9();
+  document.querySelectorAll(`#${panelId} .hs-slide`).forEach(s => s.classList.remove('active'));
+  const t = document.querySelector(`#${panelId} .hs-slide[data-idx="${idx}"]`);
+  if(t) t.classList.add('active');
+  currentPhase = idx;
+  updateNav9();
+}
+
+function prevPhase() { if(currentPhase > 0) goToPhase(currentPhase - 1); }
+function nextPhase() {
+  const { phases } = getConfig9();
+  if(currentPhase < phases.length - 1) goToPhase(currentPhase + 1);
+}
+
+function updateNav9() {
+  const { phases, panelId } = getConfig9();
+  document.getElementById('prev-btn').disabled = currentPhase === 0;
+  document.getElementById('next-btn').disabled = currentPhase === phases.length - 1;
+  document.getElementById('slide-ctr').textContent = `Phase ${currentPhase + 1} of ${phases.length}`;
+  document.querySelectorAll(`#${panelId} .phase-dot`).forEach((d,i) => d.classList.toggle('active', i === currentPhase));
+}
+
+function setSubject(s) {
+  document.body.className = document.body.className.replace(/\bsubj-\w+\b/g,'').trim()
+    + ' subj-' + (s==='cs' ? 'cta' : s==='css' ? 'css' : 'cr');
+  ['cr','cs','css'].forEach(x => {
+    const btn = document.getElementById('bs'+x);
+    if(btn) btn.classList.toggle('active', x===s);
+  });
+  const labels = { cr:'Collaborative Reading', cs:'Collaborative Science', css:'Collaborative Social Studies' };
+  document.getElementById('deck-label').textContent = labels[s] || 'Collaborative Reading';
+  currentPhase = 0;
+  updateNav9();
+}
+
+function setView(v) {
+  document.body.classList.toggle('vs', v==='s');
+  document.body.classList.toggle('vt', v==='t');
+  document.getElementById('bvs').classList.toggle('active', v==='s');
+  document.getElementById('bvt').classList.toggle('active', v==='t');
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight') nextPhase();
+  if(e.key==='ArrowLeft')  prevPhase();
+});
+
+buildPanel9(CR9_PHASES,  'cr9-panel',  'Collaborative Reading',       'cr9');
+buildPanel9(CS9_PHASES,  'cs9-panel',  'Collaborative Science',       'cs9');
+buildPanel9(CSS9_PHASES, 'css9-panel', 'Collaborative Social Studies', 'css9');
+updateNav9();
+
+</script>
+</body>
+</html>
